@@ -8,11 +8,11 @@ const passwordValidation = require("../utils/validations/checkPassword");
 const path = require('path')
 
 
-//const UserCtrl = require("../controllers/UserController");
-// const RequestCtrl = require("../controllers/RequestController");
-// const NotificationCtrl = require("../controllers/NotificationController");
-// const GlossaryCtrl = require("../controllers/GlossaryController");
-// const ServerCtrl = require("../controllers/ServerController");
+const UserCtrl = require("../controllers/UserController");
+ const ToorCtrl = require("../controllers/ToorController");
+ const NotificationCtrl = require("../controllers/NotificationController");
+ const AccountCtrl = require("../controllers/AccountController");
+ const AppCtrl = require("../controllers/AppController");
 // const FileCtrl = require("../controllers/FileController");
 // const StatCtrl = require("../controllers/StatisticController");
 // const DcumCtrl = require("../controllers/DcumController");
@@ -21,11 +21,11 @@ const path = require('path')
 const fileUpload = require("express-fileupload");
 
 const createRoutes = (app, io) => {
-   // const UserController = new UserCtrl(io);
-    // const RequestController = new RequestCtrl(io);
-    // const NotificationController = new NotificationCtrl(io);
-    // const GlossaryController = new GlossaryCtrl(io);
-    // const ServerController = new ServerCtrl(io);
+    const UserController = new UserCtrl(io);
+     const ToorController = new ToorCtrl(io);
+     const NotificationController = new NotificationCtrl(io);
+     const AccountController = new AccountCtrl(io);
+     const AppController = new AppCtrl(io);
     // const FileController = new FileCtrl(io);
     // const StatisticController = new StatCtrl(io);
     // const DcumController = new DcumCtrl(io);
@@ -64,76 +64,50 @@ const createRoutes = (app, io) => {
         })
 
     }
+     app.get("/user/me", checkAuth, updateLastSeen, UserController.me);
+     app.post("/user/register/:from", registerValidation, UserController.register);
+     app.post("/user/login", loginValidation, UserController.login);
+     app.post("/users", checkAuth, updateLastSeen, UserController.users);
+     app.delete("/user/:id", checkAuth, updateLastSeen, UserController.delete);
+     app.put("/user/:id", passwordValidation, checkAuth, updateLastSeen, UserController.change);
+     app.get("/user/:id", checkAuth, updateLastSeen, UserController.index);
+     app.put("/user/setting/:id", checkAuth, updateLastSeen, UserController.changePersonal);
+     app.get("/user/logs/:id",  UserController.getAllLogs);
+    //
+     app.get("/user/logs_file/:id",  UserController.getLogsFile);
 
-    // app.get("/user/me", checkAuth, updateLastSeen, UserController.me);
-    // app.post("/user/register/:from", registerValidation, UserController.register);
-    // app.post("/user/login", loginValidation, UserController.login);
-    // app.post("/users", checkAuth, updateLastSeen, UserController.users);
-    // app.delete("/user/:id", checkAuth, updateLastSeen, UserController.delete);
-    // app.put("/user/:id", passwordValidation, checkAuth, updateLastSeen, UserController.change);
-    // app.get("/user/:id", checkAuth, updateLastSeen, UserController.index);
-    // app.put("/user/setting/:id", checkAuth, updateLastSeen, UserController.changePersonal);
-    // app.get("/user/logs/:id",  UserController.getAllLogs);
-    //
-    // app.get("/user/logs_file/:id",  UserController.getLogsFile);
-    //
-    // app.post("/user/access/:id", checkAuth, updateLastSeen, UserController.createAccess);
-    // app.delete("/user/access/:id", checkAuth, updateLastSeen, UserController.deleteAccess);
-    // app.get("/user/access/:id", UserController.getAllAccess);
-    //
-    // app.post("/user/access_header/:id", checkAuth, updateLastSeen, UserController.createAccessHeader);
-    // app.delete("/user/access_header/:id", checkAuth, updateLastSeen, UserController.deleteAccessHeader);
-    // app.get("/user/access_header/:id", UserController.getAllAccessHeader);
-    //
-    // app.post("/user/access_static/:id", checkAuth, updateLastSeen, UserController.createAccessStatic);
-    // app.delete("/user/access_static/:id", checkAuth, updateLastSeen, UserController.deleteAccessStatic);
-    // app.get("/user/access_static/:id", UserController.getAllAccessStatic);
+     app.post("/toor", checkAuth, updateLastSeen, ToorController.create);
+     app.put("/toor/:id", checkAuth, updateLastSeen, ToorController.change);
+     app.get("/toors", checkAuth, updateLastSeen, ToorController.toors);
+     app.delete("/toor/:id", checkAuth, updateLastSeen, ToorController.delete);
 
-    //
-    // app.post("/request/", checkAuth, updateLastSeen, RequestController.create);
-    // app.post("/requests/:filter", checkAuth, updateLastSeen, RequestController.requests);
-    // app.post("/requests/search/:filter", checkAuth, updateLastSeen, RequestController.search);
-    // app.get("/request/info", checkAuth, RequestController.getInfoRequest);
-    // app.get("/request/:id", checkAuth, updateLastSeen, RequestController.index);
-    // app.put("/request/:id", checkAuth, updateLastSeen, RequestController.execut);
-    // app.put("/request/see/:id", checkAuth, updateLastSeen, RequestController.see);
-    // app.delete("/request/del/:id", checkAuth, updateLastSeen, RequestController.del);
-    // app.put("/request/change/:id", checkAuth, updateLastSeen, RequestController.change);
-    // app.delete("/request/delfile", checkAuth, updateLastSeen, RequestController.deleteFile);
-    // app.put("/request/estimation/:id", checkAuth, updateLastSeen, RequestController.estimation);
-    // app.put("/request/rezult/:id", checkAuth, updateLastSeen, RequestController.rezult);
-    // app.get("/download/img/:id", checkAuth, updateLastSeen,  RequestController.downloadImg);
-    //
-    // app.post("/notifi/", checkAuth, updateLastSeen, NotificationController.create);
-    // app.post("/notifis/", checkAuth, updateLastSeen, NotificationController.notifis);
-    // app.delete("/notifi/:id", checkAuth, updateLastSeen, NotificationController.delete);
-    // app.get("/notifiusers/:id", checkAuth, updateLastSeen, NotificationController.getUsers);
-    // app.put("/notifi/",  NotificationController.seeNotifi);
-    // app.get("/notifi/",checkAuth, NotificationController.getNotifisUserId);
-    //
-    //
-    // app.post("/glossary/:glossary", checkAuth, updateLastSeen, GlossaryController.add);
-    // app.get("/glossary/new", GlossaryController.geGlossaryNew);
-    // app.delete("/glossary/new/", checkAuth, updateLastSeen, GlossaryController.deleteNewWord);
+     app.post("/notifi/", checkAuth, updateLastSeen, NotificationController.create);
+     app.post("/notifis/", checkAuth, updateLastSeen, NotificationController.notifis);
+     app.delete("/notifi/:id", checkAuth, updateLastSeen, NotificationController.delete);
+     app.get("/notifiusers/:id", checkAuth, updateLastSeen, NotificationController.getUsers);
+     app.put("/notifi/",  NotificationController.seeNotifi);
+     app.get("/notifi/",checkAuth, NotificationController.getNotifisUserId);
+
+
     // app.put("/glossary/new/:id", checkAuth, updateLastSeen, GlossaryController.changeNewWord);
     // app.get("/glossary/", GlossaryController.geGlossarySelect);
     // app.delete("/glossary/del", checkAuth, updateLastSeen,  GlossaryController.deleteWordGlossary);
     // app.put("/glossary/stat", checkAuth, updateLastSeen, GlossaryController.getGlossaryAdminStat);
     //
-    // app.post("/server/", checkAuth, updateLastSeen, ServerController.create);
-    // app.post("/servers/",   ServerController.servers);
-    // app.delete("/server/:id", checkAuth, updateLastSeen, ServerController.delete);
-    // app.post("/server/log/:id",  ServerController.getLog);
-    // app.put("/server/:id",  checkAuth, updateLastSeen,   ServerController.change);
-    // app.get("/server/:id",  checkAuth, updateLastSeen,   ServerController.index);
-    //
-    //
-    // app.post("/version/", checkAuth, updateLastSeen, SystemController.version_create);
-    // app.get("/versions/",   SystemController.version_all);
-    // app.delete("/version/:id", checkAuth, updateLastSeen, SystemController.version_delete);
-    // app.put("/version/:id",  checkAuth, updateLastSeen,   SystemController.version_change);
-    // app.get("/version/:id",  checkAuth, updateLastSeen,   SystemController.version_index);
-    //
+     app.post("/account", checkAuth, updateLastSeen, AccountController.create);
+     app.get("/accounts", checkAuth, updateLastSeen,  AccountController.accounts);
+     app.get("/account/:id", checkAuth, updateLastSeen, AccountController.getData);
+     app.delete("/account/:id", checkAuth, updateLastSeen, AccountController.delete);
+     app.put("/account/:id",  checkAuth, updateLastSeen,   AccountController.change);
+
+    app.get("/logs", checkAuth, updateLastSeen, AppController.logs_all);
+    app.delete("/logs", checkAuth, updateLastSeen, AppController.logs_delete);
+     app.post("/version/", checkAuth, updateLastSeen, AppController.version_create);
+     app.get("/versions/",   AppController.version_all);
+     app.delete("/version/:id", checkAuth, updateLastSeen, AppController.version_delete);
+     app.put("/version/:id",  checkAuth, updateLastSeen,   AppController.version_change);
+     app.get("/version/:id",  checkAuth, updateLastSeen,   AppController.version_index);
+
     // app.post("/report",    ServerController.report);
     //
     // app.get("/download/:id", checkAuth, updateLastSeen,  FileController.downloadFile);

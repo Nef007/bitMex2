@@ -39,9 +39,8 @@ module.exports = (sequelize, Sequelize) => {
 
     Toor.associate = function(models) {
 
-        Toor.hasMany(models.user, {
-            onDelete: 'cascade'
-        });
+        Toor.hasMany(models.accounts );
+
     };
 
 

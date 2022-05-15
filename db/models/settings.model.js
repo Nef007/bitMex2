@@ -1,7 +1,7 @@
 
 
 module.exports = (sequelize, Sequelize) => {
-    const Setting = sequelize.define('setting', {
+    const Settings = sequelize.define('settings', {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -9,11 +9,11 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
         sound: {
-            type: Sequelize.TEXT,
+            type: Sequelize.STRING,
             defaultValue:'droid'
         },
         theme: {
-            type: Sequelize.TEXT,
+            type: Sequelize.STRING,
             defaultValue:'light'
         },
 
@@ -26,5 +26,5 @@ module.exports = (sequelize, Sequelize) => {
 
 
 
-    return Setting;
+    return Settings;
 }

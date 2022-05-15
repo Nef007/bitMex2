@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const User = sequelize.define('user', {
+    const Accounts = sequelize.define('accounts', {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -29,9 +29,7 @@ module.exports = (sequelize, Sequelize) => {
 
         },
         transaction: {
-            type: Sequelize.TEXT('long'),
-
-
+            type: Sequelize.TEXT,
         },
         balance: {
             type: Sequelize.STRING,
@@ -73,5 +71,5 @@ module.exports = (sequelize, Sequelize) => {
 
     });
 
-    return User;
+    return Accounts;
 }

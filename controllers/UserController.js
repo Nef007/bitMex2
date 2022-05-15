@@ -1,16 +1,19 @@
-const bcryptjs = require("bcryptjs");
-const createJWTToken = require("../utils/createJWTToken");
-const {validationResult} = require("express-validator");
-const dbSeq = require("db/models/index");
 const fs = require("fs");
-const User = dbSeq.user
-const Log = dbSeq.log
-const {Op} = require("sequelize");
-const data_user = require("../utils/data_user");
-const logs_user = require("../utils/logs_user");
-const parseIp = require("../utils/parseIp");
 const path = require('path')
 const moment = require('moment')
+const bcryptjs = require("bcryptjs");
+const {validationResult} = require("express-validator");
+const dbSeq = require("../db/models/index");
+
+const User = dbSeq.users
+const Log = dbSeq.logs
+const Setting = dbSeq.settings
+const {Op} = require("sequelize");
+
+
+const createJWTToken = require("../utils/createJWTToken");
+const logs_user = require("../utils/logs_user");
+const parseIp = require("../utils/parseIp");
 
 
 
@@ -24,21 +27,11 @@ class UserController {
         try {
             const id = req.params.id;
 
-            //   /////  ДЛЯ ORACLE
-            // let user = await simpleExecute(
-            //     `select * from user_plane where  id=:id`,
-            //     [id]);
-
             let user = await User.findOne({
-                include: [Setting,  Request],
-                attributes: {
-                    include: [[dbSeq.sequelize.fn("COUNT", dbSeq.sequelize.col("requests.id")), "count_requests"]]
-                },
-
+                include: [Setting],
                 where: {
                     id
                 },
-                group: ['users.id', 'setting.id', 'requests.id'],
             });
 
             if (!user) {
@@ -55,13 +48,9 @@ class UserController {
     me = async (req, res) => {
         const id = req.user.id;
 
-
-
-
         try {
 
             let user = await User.findOne({
-                 include:[AccessHeader],
                 where: {
                     id,
                     status: {
@@ -71,35 +60,14 @@ class UserController {
             });
 
             if (!user) {
-
                 return res.status(400).json({message: "Пользователь  заблокирован"});
             }
 
+            const token = createJWTToken(user);
 
+            user=user.purge()
 
-
-            let servicesAccess = await ServicesAccess.findAll({
-                where: {
-                    userId: id,
-                }
-            });
-            let accessStatistic = await AccessStatistic.findAll({
-                where: {
-                    userId: id,
-                }
-            });
-
-
-            const dataInfo = await data_user(id, user.role,  servicesAccess)
-
-            let userToken = user.purge()
-            const token = createJWTToken(userToken);
-
-            user=user.purge(true)
-
-            user={...user, accesses: servicesAccess, access_statistics: accessStatistic  }
-
-            res.json({user, dataInfo, token});
+            res.json({user, token});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
@@ -132,7 +100,7 @@ class UserController {
 
             const user = await User.create({
                     ...value,
-                    email: email + "@mvd.ru",
+                    email: email,
                     status: from === 'new' ? "Новый" : status,
                     password: password && hashedPassword
                 }
@@ -140,7 +108,7 @@ class UserController {
 
             await logs_user("Зарегистрирован", user.id)
 
-            await user.setSetting(await Setting.create())
+            await user.setSettings(await Setting.create())
 
             res.status(201).json({
                 message: "Заявка успешно создана",
@@ -166,7 +134,6 @@ class UserController {
 
 
             let user = await User.findOne({
-                include:[AccessHeader],
                 where: {
                     email: email.trim(),
                     status: {
@@ -204,28 +171,11 @@ class UserController {
 
 
 
-            let servicesAccess = await ServicesAccess.findAll({
-                where: {
-                    userId: user.id,
-                }
-            });
-            let accessStatistic = await AccessStatistic.findAll({
-                where: {
-                    userId: user.id,
-                }
-            });
-
-            const dataInfo = await data_user(user.id, user.role, servicesAccess)
-
-            let userToken = user.purge()
-            const token = createJWTToken(userToken);
-            user=user.purge(true)
+            const token = createJWTToken(user);
+            user=user.purge()
             await logs_user(`Авторизация.(IP: ${parseIp(req)} )`, user.id)
 
-
-            user={...user, accesses: servicesAccess, access_statistics: accessStatistic  }
-
-            res.json({user, dataInfo, token});
+            res.json({user, token});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
@@ -281,12 +231,6 @@ class UserController {
 
             });
 
-            // const totalCount = await User.count({
-            //     attributes: {exclude: ['password']},
-            //     where: {
-            //         ...searchParams
-            //     },
-            // });
 
             let totalCount = users.count
             users = users.rows
@@ -392,17 +336,12 @@ class UserController {
             let {
                 sound,
                 theme,
-                is_notifi,
-                email
             } = req.body
 
 
             await Setting.update({
                 sound,
                 theme,
-                is_notifi,
-                email
-
             }, {
                 where: {id},
 
@@ -414,96 +353,6 @@ class UserController {
         }
     };
 
-    createAccess = async (req, res) => {
-        try {
-            const id = req.params.id;
-            const {email} = req.user;
-
-            let {
-                service_access,
-                division,
-            } = req.body
-
-           let arrAcces = []
-            for (let service of service_access) {
-
-                for (let div of division) {
-
-                    try {
-                        await ServicesAccess.create({
-                            service: service.value,
-                            division: div.value,
-                            userId: id
-
-                        })
-                    }catch (e) {
-
-                        if (e.parent.code === "23505"){
-                            console.log("Повтор Доступа")
-                        }else throw e
-                    }
-                    arrAcces.push(`${service.value}<=\n=>${div.value}`)
-                }
-            }
-
-            await logs_user(`Добавлены доступы на просмотр заявок: \n ${arrAcces.join('\n')} (${email} IP: ${parseIp(req)})`, id)
-            res.json({message: `Сохранено`});
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
-
-    deleteAccess = async (req, res) => {
-        try {
-            const id = req.params.id;
-            const {email} = req.user;
-            let {
-                deleteArray
-            } = req.body
-
-            let arrAccess =   await ServicesAccess.findAll({
-                where: {
-                    id:{
-                        [Op.in] : deleteArray
-                    }
-                },
-
-            })
-
-            await ServicesAccess.destroy({
-                where: {
-                   id:{
-                       [Op.in] : deleteArray
-                   }
-                }
-            })
-
-            await logs_user(`Удалены доступы на сервисы:\n ${arrAccess.map(item=>item.service).join('\n')} (${email} IP: ${parseIp(req)})`, id)
-            res.json({message: `Удалено`});
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
-
-    getAllAccess = async (req, res) => {
-        try {
-            const id = req.params.id;
-
-            let arrAccess =   await ServicesAccess.findAll({
-                where: {
-                    userId: id
-                },
-
-            })
-
-            res.json(arrAccess);
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
     getAllLogs= async (req, res) => {
         try {
             const id = req.params.id;
@@ -520,193 +369,6 @@ class UserController {
             })
 
             res.json(logs);
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
-
-
-    createAccessHeader = async (req, res) => {
-        try {
-            const id = req.params.id;
-            const {email} = req.user;
-
-            let {
-                header_access,
-            } = req.body
-
-            let arrAccesHeader = []
-
-                for (let service of header_access) {
-
-                    try {
-                        await AccessHeader.create({
-                            service: service.value,
-                            userId: id
-
-                        })
-                    }catch (e) {
-
-                        console.log(e)
-
-                        if (e.parent.code === "23505"){
-                            console.log("Повтор Доступа")
-                        }else throw e
-                    }
-
-                    arrAccesHeader.push(`${service.value}`)
-                }
-
-            await logs_user(`Добавлены доступы на сервисы:\n ${arrAccesHeader.join('\n')} (${email} IP: ${parseIp(req)})`, id)
-
-            res.json({message: `Сохранено`});
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
-    deleteAccessHeader = async (req, res) => {
-        try {
-            const id = req.params.id;
-            const {email} = req.user;
-
-            let {
-                deleteArrayHeader
-            } = req.body
-
-         let arrAccessHeader =   await AccessHeader.findAll({
-                where: {
-                    id:{
-                        [Op.in] : deleteArrayHeader
-                    }
-                },
-
-            })
-
-           await AccessHeader.destroy({
-                where: {
-                   id:{
-                       [Op.in] : deleteArrayHeader
-                   }
-                },
-
-            })
-
-            await logs_user(`Удалены доступы на сервисы:\n ${arrAccessHeader.map(item=>item.service).join('\n')} (${email} IP: ${parseIp(req)})`, id)
-            res.json({message: `Удалено`});
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
-
-    getAllAccessHeader = async (req, res) => {
-        try {
-            const id = req.params.id;
-
-
-            let arrAccessHeader =   await AccessHeader.findAll({
-                where: {
-                    userId: id
-                },
-
-            })
-
-
-            res.json(arrAccessHeader);
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
-    createAccessStatic = async (req, res) => {
-        try {
-            const id = req.params.id;
-            const {email} = req.user;
-
-            let {
-                divisions,
-            } = req.body
-
-            let arrAccesStatistic = []
-
-                for (let division of divisions) {
-
-                    try {
-                        await AccessStatistic.create({
-                            division: division.value,
-                            userId: id
-
-                        })
-                    }catch (e) {
-
-                        console.log(e)
-
-                        if (e.parent.code === "23505"){
-                            console.log("Повтор Доступа")
-                        }else throw e
-                    }
-
-                    arrAccesStatistic.push(`${division.value}`)
-                }
-
-            await logs_user(`Добавлены доступы на статистику:\n ${arrAccesStatistic.join('\n')} (${email} IP: ${parseIp(req)})`, id)
-
-            res.json({message: `Сохранено`});
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
-    deleteAccessStatic = async (req, res) => {
-        try {
-            const id = req.params.id;
-            const {email} = req.user;
-
-            let {
-                deleteArrayStatic
-            } = req.body
-
-         let arrAccessStatic =   await AccessStatistic.findAll({
-                where: {
-                    id:{
-                        [Op.in] : deleteArrayStatic
-                    }
-                },
-
-            })
-
-           await AccessStatistic.destroy({
-                where: {
-                   id:{
-                       [Op.in] : deleteArrayStatic
-                   }
-                },
-
-            })
-
-            await logs_user(`Удалены доступы на статистику:\n ${arrAccessStatic.map(item=>item.division).join('\n')} (${email} IP: ${parseIp(req)})`, id)
-            res.json({message: `Удалено`});
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
-        }
-    };
-    getAllAccessStatic = async (req, res) => {
-        try {
-            const id = req.params.id;
-
-
-         let arrAccessStatic =   await AccessStatistic.findAll({
-                where: {
-                    userId: id
-                },
-
-            })
-
-
-            res.json(arrAccessStatic);
         } catch (e) {
             console.log(e);
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
@@ -744,12 +406,6 @@ class UserController {
 
             });
 
-            // const fileStream =  await fs.createReadStream('logs.txt');
-            //
-
-
-            // fileStream.pipe(res);
-        //  return  res.sendFile(pathLogs);
 
         } catch (e) {
             console.log(e);

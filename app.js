@@ -4,13 +4,13 @@ const {createServer} = require("http");
 
 
 
-const bool = false
+const bool = true
 const dbSeq = require("./db/models/index");
 
 
 
 dbSeq.sequelize.sync({force: bool}).then(async () => {
-    console.log('Drop and Resync with { force: false }');
+    console.log(`Drop and Resync with { force: ${bool} }`);
 });
 
 

@@ -19,7 +19,7 @@ if (config.use_env_variable) {
 
   sequelize
       .authenticate()
-      .then(() => console.log('Соединение с БД через Sequalize было успешно установлено1'))
+      .then(() => console.log('Соединение с БД через Sequalize было успешно установлено'))
       .catch((err) => console.error('Connection error: ', err))
 
 

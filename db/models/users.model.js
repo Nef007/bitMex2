@@ -41,11 +41,40 @@ module.exports = (sequelize, Sequelize) => {
 
     User.associate = function(models) {
 
-        User.hasMany(models.log, {
-            onDelete: 'cascade'
-        });
+        User.hasMany(models.logs,
+            {onDelete: 'cascade'});
+
+        User.hasMany(models.accounts,
+            {onDelete: 'cascade'});
+
+        User.hasMany(models.toors,
+            {onDelete: 'cascade'});
+
         User.belongsToMany(models.notification,
             {through: models.user_notifi});
+
+        User.hasOne(models.settings,
+            {onDelete: 'cascade'});
+    };
+
+
+
+    const secrets = [
+        "password",
+    ];
+
+
+
+
+
+    User.prototype.purge = function() {
+        const clean = {};
+            for (const key of Object.keys(this.dataValues)) {
+                if (!secrets.includes(key)) {
+                    clean[key] = this.dataValues[key];
+                }
+            }
+        return clean;
     };
 
 

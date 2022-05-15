@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
 
-    const Log = sequelize.define('log', {
+    const Log = sequelize.define('logs', {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -11,6 +11,9 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
 
         },
+    },{ // options
+        //timestamps: false,
+        freezeTableName: true,
     });
 
     return Log;

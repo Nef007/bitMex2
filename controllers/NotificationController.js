@@ -1,5 +1,5 @@
-const dbSeq = require("db/models/index");
-const User = dbSeq.user
+const dbSeq = require("../db/models/index");
+const User = dbSeq.users
 const Notification = dbSeq.notification
 const UserNotifi = dbSeq.user_notifi
 const {Op} = require("sequelize");
@@ -37,9 +37,6 @@ class NotificationController {
 
             if (group.includes("Пользователь")) {
                 filterGroup.role = 'Пользователь'
-            }
-            if (group.includes("Оператор")) {
-                filterGroup.role = 'Оператор'
             }
             if (group.includes("Администратор")) {
                 filterGroup.role = 'Администратор'
@@ -203,7 +200,6 @@ class NotificationController {
 
             const {arrIdNotifi} = req.body;
 
-
             await UserNotifi.update({seen: 1}, {
                 where: {
                     id: {
@@ -249,7 +245,6 @@ class NotificationController {
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
         }
     };
-
 
 }
 
