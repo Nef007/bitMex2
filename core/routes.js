@@ -67,6 +67,8 @@ const createRoutes = (app, io) => {
      app.get("/user/me", checkAuth, updateLastSeen, UserController.me);
      app.post("/user/register/:from", registerValidation, UserController.register);
      app.post("/user/login", loginValidation, UserController.login);
+
+
      app.post("/users", checkAuth, updateLastSeen, UserController.users);
      app.delete("/user/:id", checkAuth, updateLastSeen, UserController.delete);
      app.put("/user/:id", passwordValidation, checkAuth, updateLastSeen, UserController.change);
@@ -75,6 +77,11 @@ const createRoutes = (app, io) => {
      app.get("/user/logs/:id",  UserController.getAllLogs);
     //
      app.get("/user/logs_file/:id",  UserController.getLogsFile);
+
+
+    app.post("/user/access_service/:id", checkAuth, updateLastSeen, UserController.createAccessService);
+    app.delete("/user/access_service/:id", checkAuth, updateLastSeen, UserController.deleteAccessService);
+    app.get("/user/access_service/:id", UserController.getAllAccessService);
 
      app.post("/toor", checkAuth, updateLastSeen, ToorController.create);
      app.put("/toor/:id", checkAuth, updateLastSeen, ToorController.change);

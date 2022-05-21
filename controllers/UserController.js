@@ -8,12 +8,14 @@ const dbSeq = require("../db/models/index");
 const User = dbSeq.users
 const Log = dbSeq.logs
 const Setting = dbSeq.settings
+const AccessService = dbSeq.access_service
 const {Op} = require("sequelize");
 
 
 const createJWTToken = require("../utils/createJWTToken");
 const logs_user = require("../utils/logs_user");
 const parseIp = require("../utils/parseIp");
+const data_user = require("../utils/data_user");
 
 
 
@@ -48,9 +50,11 @@ class UserController {
     me = async (req, res) => {
         const id = req.user.id;
 
+
         try {
 
             let user = await User.findOne({
+                include:[AccessService],
                 where: {
                     id,
                     status: {
@@ -63,11 +67,13 @@ class UserController {
                 return res.status(400).json({message: "Пользователь  заблокирован"});
             }
 
-            const token = createJWTToken(user);
 
+            const dataInfo = await data_user(id, user.role)
             user=user.purge()
 
-            res.json({user, token});
+            const token = createJWTToken(user);
+
+            res.json({user, dataInfo, token});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
@@ -134,6 +140,7 @@ class UserController {
 
 
             let user = await User.findOne({
+                include:[AccessService],
                 where: {
                     email: email.trim(),
                     status: {
@@ -169,13 +176,14 @@ class UserController {
                     .json({message: "Пользователь блокирован"});
             }
 
+            const dataInfo = await data_user(user.id, user.role)
 
 
-            const token = createJWTToken(user);
             user=user.purge()
+            const token = createJWTToken(user);
             await logs_user(`Авторизация.(IP: ${parseIp(req)} )`, user.id)
 
-            res.json({user, token});
+            res.json({user, dataInfo, token});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
@@ -407,6 +415,102 @@ class UserController {
             });
 
 
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+
+
+
+    createAccessService = async (req, res) => {
+        try {
+            const id = req.params.id;
+            const {email} = req.user;
+
+            let {
+                header_access,
+            } = req.body
+
+            let arrAccesHeader = []
+
+            for (let service of header_access) {
+
+                try {
+                    await AccessService.create({
+                        service: service,
+                        userId: id
+
+                    })
+                }catch (e) {
+
+                    console.log(e)
+
+                    if (e.parent.code === "23505"){
+                        console.log("Повтор Доступа")
+                    }else throw e
+                }
+
+                arrAccesHeader.push(`${service}`)
+            }
+
+            await logs_user(`Добавлены доступы на сервисы:\n ${arrAccesHeader.join('\n')} (${email} IP: ${parseIp(req)})`, id)
+
+            res.json({message: `Сохранено`});
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+    deleteAccessService = async (req, res) => {
+        try {
+            const id = req.params.id;
+            const {email} = req.user;
+
+            let {
+                deleteArrayHeader
+            } = req.body
+
+            let arrAccessService =   await AccessService.findAll({
+                where: {
+                    id:{
+                        [Op.in] : deleteArrayHeader
+                    }
+                },
+
+            })
+
+            await AccessService.destroy({
+                where: {
+                    id:{
+                        [Op.in] : deleteArrayHeader
+                    }
+                },
+
+            })
+
+            await logs_user(`Удалены доступы на сервисы:\n ${arrAccessService.map(item=>item.service).join('\n')} (${email} IP: ${parseIp(req)})`, id)
+            res.json({message: `Удалено`});
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+
+    getAllAccessService = async (req, res) => {
+        try {
+            const id = req.params.id;
+
+
+            let arrAccessService =   await AccessService.findAll({
+                where: {
+                    userId: id
+                },
+
+            })
+
+
+            res.json(arrAccessService);
         } catch (e) {
             console.log(e);
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});

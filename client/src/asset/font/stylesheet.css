@@ -1,0 +1,17 @@
+@font-face {
+    font-family: "MuseoSansCyrl900";
+    src: url("./MuseoSansCyrl900.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: "MarckScript";
+    src: url("./MarckScript-Regular.ttf")
+}
+
+@font-face {
+    font-family: "HACKED";
+    src: url("./Hacked.ttf")
+}
+

@@ -25,6 +25,7 @@ module.exports = (req, res, next) => {
     verifyJWTToken(token)
       .then((user) => {
 
+
         req.user = user.data;
         next();
       })

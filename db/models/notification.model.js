@@ -27,5 +27,15 @@ module.exports = (sequelize, Sequelize) => {
     });
 
 
+    Notification.associate = function(models) {
+        Notification.belongsToMany(models.users,
+            {through: models.user_notifi});
+
+
+    };
+
+
+
+
     return Notification;
 }

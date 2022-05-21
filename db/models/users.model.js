@@ -8,6 +8,20 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
 
+        name: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+        family: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+        patronymic: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+
+
         email: {
             type: Sequelize.STRING,
             allowNull: false
@@ -54,6 +68,9 @@ module.exports = (sequelize, Sequelize) => {
             {through: models.user_notifi});
 
         User.hasOne(models.settings,
+            {onDelete: 'cascade'});
+
+        User.hasMany(models.access_service,
             {onDelete: 'cascade'});
     };
 

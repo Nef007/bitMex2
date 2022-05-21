@@ -7,9 +7,9 @@
     "start": "cross-env NODE_ENV=production node app.js",
     "server": "nodemon app.js",
     "monit": "node monit.js",
-    "client": "npm run start --prefix isori",
-    "client:install": "npm install --prefix isori",
-    "client:build": "npm run build --prefix isori",
+    "client": "npm run start --prefix client",
+    "client:install": "npm install --prefix client",
+    "client:build": "npm run build --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "release": "git push && pm2 deploy ecosystem.config.js production",
     "format": "prettier --write \"./src/**/**.{ts,tsx,js,jsx,json}\""
