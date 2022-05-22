@@ -1,26 +1,20 @@
-
-
 module.exports = (sequelize, Sequelize) => {
-    const SettingApp = sequelize.define('setting_app', {
+
+    const LogApp = sequelize.define('logs_app', {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            allowNull: false
+            allowNull: false,
         },
-        timeupdate: {
-            type: Sequelize.INTEGER,
-            defaultValue: 60,
-
+        text: {
+            type: Sequelize.STRING,
 
         },
-
-
     },{ // options
         //timestamps: false,
         freezeTableName: true,
     });
 
-
-    return SettingApp;
+    return LogApp;
 }

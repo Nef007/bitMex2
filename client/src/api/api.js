@@ -1,4 +1,4 @@
-import axios from 'axios';
+
 
 const request = async (url, method = 'GET', body = null, headers = {}, files = false, getFileName=false ) => {
     if (body && !files) {
@@ -63,11 +63,6 @@ export const authAPI = {
     },
 };
 
-
-
-
-
-
 export const notifiAPI = {
     create(form, token) {
         return request('/notifi/', 'POST', form, {
@@ -103,40 +98,6 @@ export const notifiAPI = {
 
 };
 
-export const monitAPI = {
-    create(form, token) {
-        return request('/server/', 'POST', form, {
-            Authorization: `Bearer ${token}`,
-        },);
-    },
-    all(params) {
-        return request('/servers/', 'POST', params);
-    },
-    del(id, token) {
-        return request(`/server/${id}`, 'DELETE', null, {
-            Authorization: `Bearer ${token}`,
-        },);
-    },
-    log(id, params) {
-        return request(`/server/log/${id}`, 'POST', params);
-    },
-    change(id, form, token) {
-        return request(`/server/${id}`, 'PUT', {form}, {
-            Authorization: `Bearer ${token}`,
-        },);
-    },
-    get_index(id,token) {
-        return request(`/server/${id}`, 'GET', null, {
-            Authorization: `Bearer ${token}`,
-        },);
-    },
-    report(date, token) {
-        return request(`/report`, 'POST', {date}, {
-            Authorization: `Bearer ${token}`,
-        },);
-    },
-
-};
 
 export const systemAPI = {
     create_Version(form, token) {
@@ -164,139 +125,25 @@ export const systemAPI = {
             Authorization: `Bearer ${token}`,
         },);
     },
-
-
-};
-
-
-export const requestAPI = {
-    create(form,  token) {
-        return request(`/request/`, 'POST', form,
-            {
-                Authorization: `Bearer ${token}`,
-            },
-            true
-        );
-        // return axios.post(`/request/`, form, {
-        //         headers: {
-        //             Authorization: `Bearer ${token}`,
-        //             "Content-Type": "multipart/form-data",
-        //         },
-        //     }
-        //
-        // );
-    },
-    all(filter, params, token) {
-        return request(`/requests/${filter}`, 'POST', params, {
+    getTimeUpdate(token) {
+        return request(`/sys_time/`, 'GET', null, {
             Authorization: `Bearer ${token}`,
-        });
+        },);
     },
-    search(filter, params, search, token) {
-        return request(`/requests/search/${filter}`, 'POST', {params, search}, {
+    getLog(token) {
+        return request(`/sys_log/`, 'GET', null, {
             Authorization: `Bearer ${token}`,
-        });
+        },);
     },
-    get(id, token) {
-        return request(`/request/${id}`, 'GET', null, {
+    deleteLog(token) {
+        return request(`/sys_log/`, 'DELETE', null, {
             Authorization: `Bearer ${token}`,
-        });
+        },);
     },
-    getInfoRequest(token) {
-        return request(`/request/info`, 'GET', null, {
+    setTimeUpdate(form, token) {
+        return request(`/sys_time/`, 'POST', {...form}, {
             Authorization: `Bearer ${token}`,
-        });
-    },
-    execut(id, data, token) {
-
-        return request(`/request/${id}`, 'PUT', data, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-    see(id, token) {
-
-        return request(`/request/see/${id}`, 'PUT', null, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-    del(id, token) {
-
-        return request(`/request/del/${id}`, 'DELETE', null, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-    change(id, formData, token) {
-
-        return request(`/request/change/${id}`, 'PUT', formData, {
-            Authorization: `Bearer ${token}`,
-        }, true);
-    },
-    delFile(id, path, token) {
-
-        return request(`/request/delfile?id=${id}&path=${path}`, 'DELETE', null, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-    estimation(id, value,  token) {
-
-        return request(`/request/estimation/${id}`, 'PUT', value, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-    rezult(id, formData, token) {
-
-        return request(`/request/rezult/${id}`, 'PUT', formData, {
-            Authorization: `Bearer ${token}`,
-        },
-        true
-
-        );
-    },
-    rezultfinish(id, value, token) {
-
-        return request(`/request/rezult/${id}`, 'PUT', value, {
-            Authorization: `Bearer ${token}`,
-        },
-
-        );
-    },
-    downloadImg(id, name, token) {
-        return request(`/download/img/${id}`, 'GET', null, {
-            Authorization: `Bearer ${token}`,
-        }, false, name);
-    },
-
-};
-
-export const documentAPI = {
-    create(form,  token) {
-        return request(`/document`, 'POST', form,
-            {
-                Authorization: `Bearer ${token}`,
-            },
-            true
-        );
-
-    },
-
-    statDevision( filters, token) {
-        return request(`/document/stat_devision`, 'POST', {filters}, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-    statSection( filters, token) {
-        return request(`/document/stat_section`, 'POST', {filters}, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-    startDuples( filters, token) {
-        return request(`/document/start_duples`, 'GET', null, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-   allDuples( filters, token) {
-        return request(`/document/all_duples`, 'GET', null, {
-            Authorization: `Bearer ${token}`,
-        });
+        },);
     },
 
 
@@ -408,6 +255,114 @@ export const glossaryAPI = {
         );
     },
 };
+
+
+export const groupAPI = {
+    create(form, token) {
+        return  request('/group', 'POST', {...form}, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    change(id, form, token) {
+        return  request(`/group/${id}`, 'PUT', {...form}, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    all(token) {
+        return  request('/groups', 'GET', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    delete(id, token) {
+        return  request(`/group/${id}`, 'DELETE', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+};
+
+export const toorAPI = {
+    create(form, token) {
+        return  request('/toor', 'POST', {...form}, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    change(id, form, token) {
+        return  request(`/toor/${id}`, 'PUT', {...form}, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    all(token) {
+        return  request('/toors', 'GET', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    myAll(token) {
+        return  request('/toors_my', 'GET', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    adminAll(token) {
+        return  request('/toors_admin', 'GET', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    delete(id, token) {
+        return  request(`/toor/${id}`, 'DELETE', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+};
+export const accountAPI = {
+    create(form, token) {
+        return  request('/account', 'POST', {...form}, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    change(id, form, token) {
+        return  request(`/account/${id}`, 'PUT', {...form}, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    all(token) {
+        return  request('/accounts', 'GET', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    delete(id, token) {
+        return  request(`/account/${id}`, 'DELETE', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    getData(id, token) {
+        return  request(`/account/${id}`, 'GET', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    getDataAll(groupId, token) {
+        return  request(`/accounts_data/${groupId}`, 'GET', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+};
+
+
+
 
 
 

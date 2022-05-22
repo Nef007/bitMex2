@@ -1,6 +1,6 @@
 const dbSeq = require("../db/models/index");
 
-const User = dbSeq.users
+const Account = dbSeq.accounts
 const Toor = dbSeq.toors
 
 
@@ -37,6 +37,7 @@ class ToorController {
         try {
             const {name, balance, ...date} = req.body
             let status
+            const userId = req.user.id
 
 
             const candidate = await Toor.findOne({
@@ -57,7 +58,12 @@ class ToorController {
             } else status = "Завершен"
 
             await Toor.create({
-                name, balance, start: date.date[0], end: date.date[1], status
+                name,
+                balance,
+                start: date.date[0],
+                end: date.date[1],
+                status,
+                userId
             })
 
 
@@ -70,11 +76,18 @@ class ToorController {
 
     change = async (req, res) => {
         try {
-            const {id, date, ...value} = req.body
+            const { date, ...value} = req.body
+            const id = req.params.id
+
+
+            if(date){
+                value.start=date[0]
+                value.end=date[1]
+            }
+
+
             await Toor.update({
                 ...value,
-                start:  date[0],
-                end: date[1]
             }, {
                 where:
                     {
@@ -83,8 +96,8 @@ class ToorController {
 
             })
 
-            if(date[0]){
-                await User.update({starttoor: date[0] }, {
+            if(date){
+                await Account.update({starttoor: date[0] }, {
                         where:{
                             toorId: id
                         }
@@ -101,37 +114,98 @@ class ToorController {
         }
     };
 
-    toors = async (req, res) => {
+    all = async (req, res) => {
         try {
 
             const toors = await Toor.findAll({
+                include:[ Account],
+                attributes: {
+                    include: [
+                        [dbSeq.sequelize.literal(`(SELECT  SUM(balance) FROM accounts WHERE "accounts"."toorId" = toors.id)`,
+                        ), 'turn'
+                        ],]
+                },
+                order: [['start', 'DESC'] ],
+            })
+
+            // for (let toor of toors) {
+            //
+            //     toor.turn = (await Account.sum('balance', {
+            //         where: {
+            //             toorId: toor.id
+            //         }
+            //     })).toFixed(4)
+            //
+            // }
+
+
+            res.json(toors)
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+    myAll = async (req, res) => {
+        try {
+
+            const userId = req.user.id
+
+            const toors = await Toor.findAll({
+                include:[{
+                    model: Account,
+                    attributes: [],
+                    where:{
+                        userId
+                    }
+                }],
+                attributes: {
+                    include: [
+                        [dbSeq.sequelize.literal(`(SELECT  SUM(balance) FROM accounts WHERE "accounts"."toorId" = toors.id)`,
+                        ), 'turn'
+                        ],
+
+                    ]
+                },
                 order: [['start', 'DESC'] ],
                 raw: true
+
+
             })
 
             for (let toor of toors) {
 
-                //    const users = await User.findAll({
-                //        where: {
-                //            toorId: toor.id
-                //        }
-                //    })
-                // sum=0
-                //
-                //    for (let user of users) {
-                //        sum+= Number(user.balance)
-                //    }
-                //
-
-                toor.turn = (await User.sum('balance', {
-                    where: {
+                toor.accounts = await Account.findAll({
+                    where:{
                         toorId: toor.id
                     }
-                })).toFixed(4)
-
-            }
+                })
 
 
+
+           }
+
+            res.json(toors)
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+    adminAll = async (req, res) => {
+        try {
+
+            const toors = await Toor.findAll({
+                include:[{
+                    model: Account,
+                }],
+                attributes: {
+                    include: [
+                        [dbSeq.sequelize.literal(`(SELECT  SUM(balance) FROM accounts WHERE "accounts"."toorId" = toors.id)`,
+                        ), 'turn'
+                        ],]
+                },
+                order: [['start', 'DESC'] ],
+
+            })
             res.json(toors)
         } catch (e) {
             console.log(e)

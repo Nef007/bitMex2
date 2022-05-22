@@ -3,6 +3,8 @@ import React, {useEffect} from "react";
 import {useRootStore} from "../../store";
 import {DebounceSelect} from "../../component/DebounceSelect";
 import {observer} from "mobx-react-lite";
+import LockOutlined from "@ant-design/icons/lib/icons/LockOutlined";
+import RedoOutlined from "@ant-design/icons/lib/icons/RedoOutlined";
 
 export const RegisterPage = observer(() => {
     const {current_user} = useRootStore()
@@ -58,6 +60,20 @@ export const RegisterPage = observer(() => {
                     placeholder="Email"
                 />
             </Form.Item>
+            <Form.Item
+                name="password"
+                rules={[{required:true , message: '', min: 5}]}
+            >
+                <Input
+                    prefix={
+                        <LockOutlined/>
+                    }
+                    type="text"
+                    placeholder="Пароль"
+
+                />
+
+            </Form.Item>
 
             <Form.Item
                 name="phone"
@@ -65,6 +81,7 @@ export const RegisterPage = observer(() => {
             >
                 <Input addonBefore="+7" type="text" maxLength={10} placeholder="Телефон"/>
             </Form.Item>
+
             <Form.Item
                 name="role"
                 rules={[{required: true, message: ''}]}

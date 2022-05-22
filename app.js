@@ -5,6 +5,8 @@ const {createServer} = require("http");
 const dbSeq = require("./db/models/index");
 const User = dbSeq.users
 const Setting = dbSeq.settings
+const AccessService = dbSeq.access_service
+const SettingsApp = dbSeq.setting_app
 const bool = false
 
 
@@ -30,6 +32,18 @@ dbSeq.sequelize.sync({force: bool}).then(async () => {
             theme: "light",
             userId: user.id
         })
+        await SettingsApp.create()
+        await AccessService.bulkCreate([
+
+            {
+                service: "Турниры",
+                userId: user.id
+            },   {
+                service: "Администрирование",
+                userId: user.id
+            }
+
+        ])
     }
 });
 

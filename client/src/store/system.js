@@ -6,7 +6,8 @@ import {v4 as uuid} from "uuid";
 
 
 export const system = makeAutoObservable({
-
+    timeupdate: 60,
+    log: [],
     filesDownloader: [],
     allVersions: [],
     version: {},
@@ -33,6 +34,25 @@ export const system = makeAutoObservable({
             this.setLoading()
         } catch (e) {
             this.setLoading()
+            notification.setInfo('error', e.message)
+        }
+
+    },
+    async setTimeUpdate(form) {
+        try {
+           const data = await systemAPI.setTimeUpdate(form, localStorage.getItem('userData'))
+            this.timeupdate=form.timeupdate
+
+            notification.setInfo('success', data.message)
+        } catch (e) {
+            notification.setInfo('error', e.message)
+        }
+
+    },
+    async getTimeUpdate() {
+        try {
+           this.timeupdate = await systemAPI.getTimeUpdate(localStorage.getItem('userData'))
+        } catch (e) {
             notification.setInfo('error', e.message)
         }
 
@@ -74,6 +94,34 @@ export const system = makeAutoObservable({
             this.setLoading()
         } catch (e) {
             this.setLoading()
+            notification.setInfo('error', e.message)
+            if(e.message==="Не действительный токен"){
+                current_user.logout()
+            }
+        }
+    },
+    async getLog() {
+        try {
+            this.setLoading()
+            this.log = await systemAPI.getLog( localStorage.getItem('userData'))
+
+            this.setLoading()
+        } catch (e) {
+            this.setLoading()
+            notification.setInfo('error', e.message)
+            if(e.message==="Не действительный токен"){
+                current_user.logout()
+            }
+        }
+    },
+    async deleteLog() {
+        try {
+
+           const data = await systemAPI.deleteLog( localStorage.getItem('userData'))
+             notification.setInfo('success', data.message)
+
+        } catch (e) {
+
             notification.setInfo('error', e.message)
             if(e.message==="Не действительный токен"){
                 current_user.logout()

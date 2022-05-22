@@ -4,10 +4,13 @@ import {users} from "./users";
 import {notification} from "./info";
 
 import {system} from "./system";
+import {groupStore} from "./groupStore";
+import {accountStore} from "./accountStore";
+import {toorStore} from "./toorStore";
 
 
 
-export const rootStore = { system,  current_user, users, notification,   };
+export const rootStore = { system, groupStore, accountStore, toorStore,  current_user, users, notification,   };
 
 export const RootStoreContext = createContext({rootStore} );
 

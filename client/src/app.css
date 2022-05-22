@@ -186,9 +186,27 @@ footer {
 .vertical-align-top{
   vertical-align: top;
 }
+.imgBox{
+  display: block;
+  text-align: center;
+}
 
+.img{
+  text-align: center;
+  width: 200px;
+}
+.icons{
+  text-align: center;
+  width: 50px;
+}
 
 .w100 {
   width: 100%; }
+
+
+.greenNum {
+  color: #2a8922; }
+.redNum {
+  color: #db3434; }
 
 

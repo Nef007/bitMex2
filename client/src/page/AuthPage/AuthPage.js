@@ -12,6 +12,8 @@ export const AuthPage = observer( (props) => {
 
     const {current_user} = useRootStore()
 
+
+
     return (
 
         <Form name="login"

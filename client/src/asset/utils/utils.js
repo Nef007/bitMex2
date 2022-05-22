@@ -38,6 +38,16 @@ export   function getSound  (value) {
         return signalizatsiya
     }
 
+
+}
+export   function getColorNum  (value) {
+    if(value > 0){
+      return <span className="greenNum">{value}</span>
+    }else{
+        return <span className="redNum">{value}</span>
+    }
+
+
 }
 
 

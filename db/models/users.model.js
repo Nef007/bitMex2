@@ -21,6 +21,10 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
 
+        phone: {
+            type: Sequelize.STRING,
+
+        },
 
         email: {
             type: Sequelize.STRING,
@@ -71,6 +75,9 @@ module.exports = (sequelize, Sequelize) => {
             {onDelete: 'cascade'});
 
         User.hasMany(models.access_service,
+            {onDelete: 'cascade'});
+
+        User.hasMany(models.groups,
             {onDelete: 'cascade'});
     };
 

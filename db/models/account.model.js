@@ -32,7 +32,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.TEXT,
         },
         balance: {
-            type: Sequelize.STRING,
+            type: Sequelize.INTEGER,
 
 
         },
@@ -48,6 +48,16 @@ module.exports = (sequelize, Sequelize) => {
 
         },
         comment: {
+            type: Sequelize.STRING,
+
+        },
+        status_monit: {
+            type: Sequelize.STRING,
+            defaultValue: 'Активный',
+            allowNull: false,
+
+        },
+        comment_monit: {
             type: Sequelize.STRING,
 
         },

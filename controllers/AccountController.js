@@ -1,19 +1,14 @@
-const fs = require("fs");
-const path = require('path')
+
 const moment = require('moment')
-const bcryptjs = require("bcryptjs");
-const {validationResult} = require("express-validator");
 const dbSeq = require("../db/models/index");
 
 const Account = dbSeq.accounts
 const Toor = dbSeq.toors
+const Group = dbSeq.groups
 const {Op} = require("sequelize");
 
-
-const createJWTToken = require("../utils/createJWTToken");
-const logs_user = require("../utils/logs_user");
-const parseIp = require("../utils/parseIp");
 const request_bitmex = require("../utils/request_bitmex");
+const logger = require("../utils/logs_app");
 
 
 
@@ -48,44 +43,41 @@ class AccountController {
         try {
             let userBit
 
-            const { isAdmin, toorid, ...user} = req.body
+            const {  groupId, ...account} = req.body
 
-            const toor = await Toor.findByPk(toorid)
+           // const group = await Group.findByPk(groupId)
 
             try {
 
-                userBit = await request_bitmex(user.apikey, user.apisecret, 'GET', '/user',
+                userBit = await request_bitmex(account.apikey, account.apisecret, 'GET', '/user',
                     {}
                 );
 
 
             } catch (e) {
 
-
                 return res.status(400).json({message: 'Ошибка получения данных c BitMex'})
             }
 
 
-
             const repit = await Account.findAll({
                 where: {
-                    [Op.and]: [{ toorId: toorid}, {idbitmex: userBit.id}]
+                    [Op.and]: [{ groupId: groupId}, {idbitmex: String(userBit.id)}]
                 },
                 raw: true
             })
 
             if(repit.length){
-                return res.status(400).json({message: `Пользователь уже существует в этом турнире`})
-            }
-
-            if(!isAdmin){
-                if(toor.status==="Активный" || toor.status==="Завершен" ){
-                    return res.status(400).json({message: `Регистрация невозможна! турнир уже начался или завершен`})
-                }
+                return res.status(400).json({message: `Пользователь уже существует в этой группе`})
             }
 
 
-            toor.createAccounts({...user, starttoor: toor.start, idbitmex: userBit.id})
+            await Account.create({
+                ...account,
+                idbitmex: userBit.id,
+                groupId: groupId,
+                userId: req.user.id
+            })
 
             res.status(201).json({message: 'Зарегистрирован'})
         } catch (e) {
@@ -98,7 +90,12 @@ class AccountController {
 
     accounts = async (req, res) => {
         try {
+
+            const userId = req.user.id
             const accounts = await Account.findAll({
+                where:{
+                    userId
+                },
                 order: [['balance', 'DESC'] ],
                 raw: true
             })
@@ -115,7 +112,7 @@ class AccountController {
 
             const id = req.params.id
 
-            const user = await User.findByPk(id)
+            const account = await Account.findByPk(id)
 
 
             try {
@@ -151,17 +148,17 @@ class AccountController {
                     // await makeRequest(user.apikey, user.apisecret, 'GET', '/user/wallet',
                     //     {currency: "XBt"}
                     // ),
-                    await makeRequest(user.apikey, user.apisecret, 'GET', '/user/wallet',
+                    await request_bitmex(account.apikey, account.apisecret, 'GET', '/user/wallet',
                         {currency: "XBt"}
                     ),
-                    await makeRequest(user.apikey, user.apisecret, 'GET', '/apiKey',
+                    await request_bitmex(account.apikey, account.apisecret, 'GET', '/apiKey',
                         {}
                     ),
-                    await makeRequest(user.apikey, user.apisecret, 'GET', '/position',
+                    await request_bitmex(account.apikey, account.apisecret, 'GET', '/position',
                         {reverse: true}
                     ),
-                    await makeRequest(user.apikey, user.apisecret, 'GET', '/order',
-                        {reverse: true, startTime: new Date(user.starttoor)}
+                    await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
+                        {reverse: true, startTime: new Date(account.starttoor)}
                     ),
 
 
@@ -173,7 +170,7 @@ class AccountController {
                     .then(([response1, response2, response3, response4  ]) => {
 
                         wallet=response1
-                        console.log(wallet)
+                      //  console.log(wallet)
                         api=response2
                         positionBit=response3
                         order=response4
@@ -189,31 +186,31 @@ class AccountController {
 
 
 
-                user.balance = wallet.amount
-                user.trade = order.length
-                user.transaction = String(positionBit.filter(item=>  item.avgEntryPrice!==null && item.liquidationPrice!==null ).map(item => `${item.symbol}: ${item.currentQty.toFixed(2)}/${item.avgEntryPrice.toFixed(2)}/${item.liquidationPrice.toFixed(2)}/${item.unrealisedPnl.toFixed(2)}/${item.markPrice.toFixed(2)}`)  || '')
-                user.api = api.length
-                user.comment = `Обновлен# ${new Date}`
+                account.balance = wallet.amount
+                account.trade = order.length
+                account.transaction = String(positionBit.filter(item=>  item.avgEntryPrice!==null && item.liquidationPrice!==null ).map(item => `${item.symbol}: ${item.currentQty.toFixed(2)}/${item.avgEntryPrice.toFixed(2)}/${item.liquidationPrice.toFixed(2)}/${item.unrealisedPnl.toFixed(2)}/${item.markPrice.toFixed(2)}`)  || '')
+                account.api = api.length
+                account.comment = `Обновлен# ${new Date}`
 
-                await User.update({
+                await Account.update({
                     // deposit: amount,
-                    balance:  user.balance,
-                    trade:  user.trade,
-                    transaction: user.transaction,
-                    api: user.api,
+                    balance:  account.balance,
+                    trade:  account.trade,
+                    transaction: account.transaction,
+                    api: account.api,
                     comment: `Обновлен:`
 
                 }, {
                     where: {
-                        id: user.id
+                        id: account.id
                     }
                 })
 
             } catch (e) {
                 if (e.code === 403) {
-                    user.balance = "H/В"
-                    user.trade = "-"
-                    user.transaction = ''
+                    account.balance = "H/В"
+                    account.trade = "-"
+                    account.transaction = ''
                 }
 
                 console.log(e)
@@ -224,7 +221,146 @@ class AccountController {
             }
 
 
-            res.json(user)
+            res.json(account)
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+
+
+
+    getDataAll = async (req, res) => {
+        try {
+
+            const groupId = req.params.id==='undefined' ? undefined : req.params.id
+            const userId = req.user.id
+
+            let qweryPar={userId}
+            if(groupId){
+                qweryPar.groupId=groupId
+            }
+
+            console.log(qweryPar)
+
+            const accounts = await Account.findAll({
+                where:{
+                    ...qweryPar
+                }
+            })
+
+
+            for (let account of accounts) {
+
+                if (account.status === "Активный") {
+
+
+                    try {
+                        // const wallet = await makeRequest(user.apikey, user.apisecret, 'GET', '/user/wallet',
+                        //     {currency: "XBt"}
+                        // );
+                        //
+                        //
+                        // // количество api
+                        // const api = await makeRequest(user.apikey, user.apisecret, 'GET', '/apiKey',
+                        //     {}
+                        // );
+                        //
+                        //
+                        // // в сделке
+                        // const positionBit = await makeRequest(user.apikey, user.apisecret, 'GET', '/position',
+                        //     {reverse: true}
+                        // );
+                        //
+                        //
+                        // ///  трейды  выводить по дате
+                        // const order = await makeRequest(user.apikey, user.apisecret, 'GET', '/order',
+                        //     {reverse: true, startTime: new Date(user.starttoor)}
+                        // );
+
+                        let wallet = ''
+                        let api = ''
+                        let positionBit = []
+                        let order = ''
+
+
+                        const arr = [
+                            // await makeRequest(user.apikey, user.apisecret, 'GET', '/user/wallet',
+                            //     {currency: "XBt"}
+                            // ),
+                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/user/wallet',
+                                {currency: "XBt"}
+                            ),
+                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/apiKey',
+                                {}
+                            ),
+                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/position',
+                                {reverse: true}
+                            ),
+                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
+                                {reverse: true, startTime: new Date(account.starttoor)}
+                            ),
+
+
+                        ]
+
+
+                        await Promise.all(arr)
+                            .then(([response1, response2, response3, response4]) => {
+
+                                wallet = response1
+                                //  console.log(wallet)
+                                api = response2
+                                positionBit = response3
+                                order = response4
+
+
+                            })
+                            .catch(error => {
+                                console.log('Ошибка получения данных')
+                                throw error
+                            })
+
+
+                        account.balance = wallet.amount
+                        account.trade = order.length
+                        account.transaction = String(positionBit.filter(item => item.avgEntryPrice !== null && item.liquidationPrice !== null).map(item => `${item.symbol}: ${item.currentQty.toFixed(2)}/${item.avgEntryPrice.toFixed(2)}/${item.liquidationPrice.toFixed(2)}/${item.unrealisedPnl.toFixed(2)}/${item.markPrice.toFixed(2)}`) || '')
+                        account.api = api.length
+                        account.comment = `Обновлен# ${new Date}`
+
+                        await Account.update({
+                            // deposit: amount,
+                            balance: account.balance,
+                            trade: account.trade,
+                            transaction: account.transaction,
+                            api: account.api,
+                            comment: `Обновлен:`
+
+                        }, {
+                            where: {
+                                id: account.id
+                            }
+                        })
+
+                    } catch (e) {
+                        if (e.code === 403) {
+                            account.balance = "H/В"
+                            account.trade = "-"
+                            account.transaction = ''
+                        }
+                        account.comment = "##Ошибка##!"
+
+                        console.log(e)
+                        await logger(`${e.code} Аккаунт: ${account.username} Пользователь: ${userId}` || `Неизвестная ошибка пользователь  Аккаунт: ${account.username} Пользователь: ${userId}`)
+
+
+                    }
+
+                }
+            }
+
+
+            res.json(accounts)
         } catch (e) {
             console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
@@ -235,9 +371,9 @@ class AccountController {
     change = async (req, res) => {
         try {
 
-            let comment = req.body.text
+            let {...value} = req.body
 
-            await Account.update({status: "Исключен", comment}, {
+            await Account.update({...value}, {
                 where:
                     {
                         id: req.params.id
@@ -245,7 +381,7 @@ class AccountController {
 
             })
 
-            res.status(201).json({message: 'Пользователь исключен'})
+            res.status(201).json({message: `Сохранено`})
 
         } catch (e) {
             console.log(e);

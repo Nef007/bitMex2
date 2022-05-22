@@ -104,6 +104,22 @@ class UserController {
             }
 
 
+            const candidate = await User.findOne({
+                where:
+                    {
+                        email,
+                        status: {
+                            [Op.in]: [ 'Активный','Временный']
+                        }
+                    },
+                raw: true
+            })
+            if (candidate) {
+                res.status(400).json({message: 'Такой пользователь уже существует'})
+            }
+
+
+
             const user = await User.create({
                     ...value,
                     email: email,
@@ -114,7 +130,8 @@ class UserController {
 
             await logs_user("Зарегистрирован", user.id)
 
-            await user.setSettings(await Setting.create())
+            await user.setSetting(await Setting.create())
+           await AccessService.create({service: 'Турниры', userId: user.id})
 
             res.status(201).json({
                 message: "Заявка успешно создана",

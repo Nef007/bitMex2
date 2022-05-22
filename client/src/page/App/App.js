@@ -24,7 +24,7 @@ export const AppPage = observer(() => {
     const {current_user} = useRootStore()
 
     return (
-        <MainPage  service="Документы"
+        <MainPage  service="Турниры"
                    title="Личный кабинет BitMex"
                    menu={ <ul className="menu">
                        <li>

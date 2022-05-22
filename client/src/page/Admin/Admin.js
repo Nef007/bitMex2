@@ -17,6 +17,10 @@ import {AboutProgramPage} from "../AboutProgramPage/AboutProgramPage";
 import {MainPage} from "../../component/MainPage";
 import {Notification} from "../../component/Notification/Notification";
 import {NoAccessPage} from "../NoAccessPage/noAccessPage";
+import {LogPage} from "./SettingPage/LogPage";
+import {SettingsAppPage} from "./SettingPage/SettingAppPage";
+import SettingOutlined from "@ant-design/icons/lib/icons/SettingOutlined";
+import FileTextOutlined from "@ant-design/icons/lib/icons/FileTextOutlined";
 
 
 
@@ -61,6 +65,24 @@ export const AdminPage = observer(props => {
                               <span>Оповещение</span>
                           </NavLink>
                       </li>
+                      <li>
+                          <NavLink
+                              className="menu_item"
+                              activeClassName="active"
+                              to="/admin/setting">
+                              <span className="menu_item_icon"><SettingOutlined /></span>
+                              <span>Настройки</span>
+                          </NavLink>
+                      </li>
+                      <li>
+                          <NavLink
+                              className="menu_item"
+                              activeClassName="active"
+                              to="/admin/log">
+                              <span className="menu_item_icon"><FileTextOutlined /></span>
+                              <span>Лог</span>
+                          </NavLink>
+                      </li>
                      {/*<li>*/}
                      {/*     <NavLink*/}
                      {/*         className="menu_item"*/}
@@ -89,7 +111,9 @@ export const AdminPage = observer(props => {
                       <Route path="/user/:id" element={<UserPageContainer/>}/>
                       <Route path="/settings/" element={<SettingsPage/>}/>
                       <Route path="/notification/" element={<NotificationsPage/>}/>
-                      {/*<Route path="/monitor/" element={<MonitorPage/>}/>*/}
+                      <Route path="/setting/" element={<SettingsAppPage/>}/>
+                      <Route path="/log/" element={<LogPage/>}/>
+                      {/*<Route path="/monitor/" element={<SettingPage/>}/>*/}
                       <Route path="/*" element={<Navigate replace to="/admin/users"/>}/>
                   </Routes>}
                   prefix='admin'

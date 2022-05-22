@@ -13,6 +13,8 @@ const UserCtrl = require("../controllers/UserController");
  const NotificationCtrl = require("../controllers/NotificationController");
  const AccountCtrl = require("../controllers/AccountController");
  const AppCtrl = require("../controllers/AppController");
+ const GroupCtrl = require("../controllers/GroupController");
+
 // const FileCtrl = require("../controllers/FileController");
 // const StatCtrl = require("../controllers/StatisticController");
 // const DcumCtrl = require("../controllers/DcumController");
@@ -26,6 +28,7 @@ const createRoutes = (app, io) => {
      const NotificationController = new NotificationCtrl(io);
      const AccountController = new AccountCtrl(io);
      const AppController = new AppCtrl(io);
+     const GroupController = new GroupCtrl(io);
     // const FileController = new FileCtrl(io);
     // const StatisticController = new StatCtrl(io);
     // const DcumController = new DcumCtrl(io);
@@ -85,8 +88,17 @@ const createRoutes = (app, io) => {
 
      app.post("/toor", checkAuth, updateLastSeen, ToorController.create);
      app.put("/toor/:id", checkAuth, updateLastSeen, ToorController.change);
-     app.get("/toors", checkAuth, updateLastSeen, ToorController.toors);
+     app.get("/toors", checkAuth, updateLastSeen, ToorController.all);
+     app.get("/toors_my", checkAuth, updateLastSeen, ToorController.myAll);
+     app.get("/toors_admin", checkAuth, updateLastSeen, ToorController.adminAll);
      app.delete("/toor/:id", checkAuth, updateLastSeen, ToorController.delete);
+
+     app.post("/group", checkAuth, updateLastSeen, GroupController.create);
+     app.put("/group/:id", checkAuth, updateLastSeen, GroupController.change);
+     app.get("/groups", checkAuth, updateLastSeen, GroupController.all);
+     app.delete("/group/:id", checkAuth, updateLastSeen, GroupController.delete);
+
+
 
      app.post("/notifi/", checkAuth, updateLastSeen, NotificationController.create);
      app.post("/notifis/", checkAuth, updateLastSeen, NotificationController.notifis);
@@ -104,6 +116,7 @@ const createRoutes = (app, io) => {
      app.post("/account", checkAuth, updateLastSeen, AccountController.create);
      app.get("/accounts", checkAuth, updateLastSeen,  AccountController.accounts);
      app.get("/account/:id", checkAuth, updateLastSeen, AccountController.getData);
+     app.get("/accounts_data/:id", checkAuth, updateLastSeen, AccountController.getDataAll);
      app.delete("/account/:id", checkAuth, updateLastSeen, AccountController.delete);
      app.put("/account/:id",  checkAuth, updateLastSeen,   AccountController.change);
 
@@ -114,6 +127,12 @@ const createRoutes = (app, io) => {
      app.delete("/version/:id", checkAuth, updateLastSeen, AppController.version_delete);
      app.put("/version/:id",  checkAuth, updateLastSeen,   AppController.version_change);
      app.get("/version/:id",  checkAuth, updateLastSeen,   AppController.version_index);
+
+
+     app.get("/sys_time",  checkAuth, updateLastSeen,   AppController.getTime);
+     app.post("/sys_time",  checkAuth, updateLastSeen,   AppController.setTime);
+     app.get("/sys_log",  checkAuth, updateLastSeen,   AppController.getLog);
+     app.delete("/sys_log",  checkAuth, updateLastSeen,   AppController.deleteLog);
 
     // app.post("/report",    ServerController.report);
     //

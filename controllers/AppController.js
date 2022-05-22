@@ -1,8 +1,9 @@
 
 const dbSeq = require("../db/models/index");
-const Log = dbSeq.logs
+const Log = dbSeq.logs_app
 const Version = dbSeq.versions
 const User = dbSeq.users
+const SettingsApp = dbSeq.setting_app
 const {Op} = require("sequelize");
 
 
@@ -154,6 +155,66 @@ class AppController {
                 }
             })
             res.json({message: `Запись удалена`});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+
+    getTime = async (req, res) => {
+        try {
+
+          const setting =  await SettingsApp.findOne({
+                where: {
+                    id: 1
+                }
+            })
+            res.json(setting.timeupdate);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+    getLog = async (req, res) => {
+        try {
+
+          const logs =  await Log.findAll(
+              {
+                  order: [['createdAt', 'DESC'] ],
+                  raw: true
+              }
+          )
+
+            res.json(logs);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+
+    deleteLog = async (req, res) => {
+        try {
+
+           await Log.destroy()
+
+            res.json({message: "Удалено!"});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+    setTime = async (req, res) => {
+        try {
+
+            const {timeupdate} = req.body
+
+            await SettingsApp.update({timeupdate},{
+                where: {
+                    id: 1
+                }
+            })
+
+            res.json({message: "Сохранено"});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
