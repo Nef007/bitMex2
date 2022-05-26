@@ -17,7 +17,7 @@ module.exports = {
       NODE_ENV: "production",
       PORT: 443,
       JWT_SECRET: 'Dkfl',
-      DATABASE: 'bitMex',
+      DATABASE: 'bitmex',
       USERNAME : 'postgres',
       PASSWORD : '123',
       HOST :  'localhost',
