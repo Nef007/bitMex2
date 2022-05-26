@@ -25,7 +25,7 @@
     "username": "postgres",
     "password": "12345678",
     "port": 5432,
-    "database": "bitmex",
+    "database": "bitmex444",
     "host": "localhost",
     "dialect": "postgres",
     "logging": false,
