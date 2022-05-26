@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Link, Navigate, NavLink, Route, Routes} from 'react-router-dom';
-import {Badge, Button, Dropdown, Menu, message} from "antd";
+import {Badge, Button, Dropdown, Menu, message, Popover, Tag} from "antd";
 
 import "../auth.css";
 import "../app.css";
@@ -19,13 +19,22 @@ import {AuthPage} from "../page/AuthPage/AuthPage";
 import {RegisterPage} from "../page/RegisterPage/RegisterPage";
 import QuestionCircleOutlined from "@ant-design/icons/lib/icons/QuestionCircleOutlined";
 import Downloader from "./Downloader/Downloader";
-
+import {getColorNum} from "../asset/utils/utils";
+import ArrowUpOutlined from "@ant-design/icons/lib/icons/ArrowUpOutlined";
+import ArrowDownOutlined from "@ant-design/icons/lib/icons/ArrowDownOutlined";
+import SwapOutlined from "@ant-design/icons/lib/icons/SwapOutlined";
+import ReloadOutlined from "@ant-design/icons/lib/icons/ReloadOutlined";
+import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 
 export const MainPage = observer(({service, title, menu, route, prefix, current_user}) => {
 
     const {notification, system} = useRootStore()
     const {user, initialized, isAuth, isReset} = current_user
     const {info} = notification
+
+
+
+
 
 
 
@@ -44,9 +53,25 @@ export const MainPage = observer(({service, title, menu, route, prefix, current_
 
     }, [info])
 
+
+    useEffect( async () => {
+        await system.getIndex()
+
+        const timer = setInterval(() => {
+              system.getIndex()
+            return ()=> clearInterval(timer)
+        }, 30000);
+
+    }, [])
+
+
+
+
     if (!initialized) {
         return <Loader/>
     }
+
+   // let indx =  system.index.filter(item=>item.rootSymbol==="XBT")
 
 
 
@@ -54,7 +79,19 @@ export const MainPage = observer(({service, title, menu, route, prefix, current_
         isAuth && user.access_services && user.access_services.map(item=> item.service).includes(service) ?
             <div className="wrapper">
                 <header>
+                    <div>
+
+                        {system.index.map(item=><Popover
+                            content={ <div>
+                            <p><ArrowUpOutlined style={{color: "red"}} /> {item.highPrice}</p>
+                            <p><ArrowDownOutlined style={{color: "green"}} /> {item.lowPrice}</p>
+                            <p><SwapOutlined style={{color: "blue"}} /> {item.lastPrice}</p>
+                        </div>
+                        } title={item.symbol} trigger="hover"><Tag><b>{item.symbol}</b> {(item.lastPrice).toFixed(2)} {getColorNum((((item.lastPrice-item.prevPrice24h)/item.prevPrice24h)*100).toFixed(2),'%')}</Tag>  </Popover>)}
+
+                    </div>
                     <div className="profileMenu">
+                        <Button className='mr10' onClick={()=> system.getIndex()}>{!system.loading ? <ReloadOutlined  /> : <LoadingOutlined /> }</Button>
                         <Notification data={current_user.notification} onSee={(arr) => current_user.seen(arr)}
                                       className='mr10'/>
                         <span className="mr10">{user.role}:</span>

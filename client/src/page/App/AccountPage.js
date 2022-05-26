@@ -33,6 +33,8 @@ import UserAddOutlined from "@ant-design/icons/lib/icons/UserAddOutlined";
 import SearchOutlined from "@ant-design/icons/lib/icons/SearchOutlined";
 import ac from "prettier/esm/parser-yaml";
 import {getColorNum} from "../../asset/utils/utils";
+import {Link} from "react-router-dom";
+import EyeOutlined from "@ant-design/icons/lib/icons/EyeOutlined";
 
 
 
@@ -432,8 +434,13 @@ export const AccountPage = observer(props => {
                                     onClick={event => accountStore.getData(record.id)}
                                     size="small"/>
                             {/*</NavLink>*/}
-
                         </Tooltip>
+                        <Link to={`/bit/account/${record.id}`}>
+                            <Tooltip title="Просмотр">
+                                <Button shape="circle" size="small" icon={<EyeOutlined/>}
+                                />
+                            </Tooltip>
+                        </Link>
 
 
                         {record.status === "Активный" ? <Tooltip title="Исключить из мониторинга">

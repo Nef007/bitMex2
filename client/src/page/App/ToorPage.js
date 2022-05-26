@@ -5,7 +5,7 @@ import "./docum.css"
 
 import {observer} from "mobx-react-lite";
 import {
-    Button,
+    Button, Checkbox,
     DatePicker,
     Form,
     Input,
@@ -41,6 +41,7 @@ import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 import ReloadOutlined from "@ant-design/icons/lib/icons/ReloadOutlined";
 import {current_user} from "../../store/currentUser";
 import LogoutOutlined from "@ant-design/icons/lib/icons/LogoutOutlined";
+import LockOutlined from "@ant-design/icons/lib/icons/LockOutlined";
 const {RangePicker} = DatePicker
 
 
@@ -253,8 +254,7 @@ export const ToorPage = observer(props => {
 
         {
             title: "",
-            dataIndex: "name",
-            render: (text) => <b>{text}</b>
+            render: (record) => <b>{record.name} {record.private === true && <LockOutlined />} </b>
 
 
         },
@@ -885,10 +885,6 @@ export const ToorPage = observer(props => {
             <div className="contentOut">
                 <Tabs type="card">
                     <Tabs.TabPane tab="Мои" key="1">
-
-
-
-
                         <Modal
                             title="Добавить аккаунт"
                             visible={activeAddUser}
@@ -922,7 +918,7 @@ export const ToorPage = observer(props => {
                                     rules={[{ required: true, message: 'Выберите турнир!' }]}
                                 >
                                     <Select placeholder="Выбрать">
-                                        {toorStore.toors.map(toor=> <Select.Option value={toor.id}>{toor.name} {toor.balance}</Select.Option>)}
+                                        {toorStore.toors.filter(toor=>toor.status==='Ожидание').map(toor=> <Select.Option value={toor.id}>{toor.name} {toor.balance}</Select.Option>)}
 
 
                                     </Select>
@@ -1111,6 +1107,39 @@ export const ToorPage = observer(props => {
                                         format="YYYY-MM-DD HH:mm"
                                     />
                                 </Form.Item>
+                                <Form.Item
+                                    label="Приватный"
+                                    name="private"
+                                    valuePropName="checked"
+                                >
+                                    <Checkbox />
+                                </Form.Item>
+                                <Form.Item
+                                    noStyle
+                                    shouldUpdate={(prevValues, currentValues) => prevValues.private !== currentValues.private}
+                                >
+                                    {({getFieldValue}) =>
+                                        getFieldValue('private') === true && (
+                                            <>
+
+
+                                                <Form.Item
+                                                    label="Пароль"
+                                                    name="password"
+                                                    rules={[{required: true,
+                                                        message: '',
+
+                                                    }]}
+                                                >
+                                                    <Input placeholder="Пароль"/>
+                                                </Form.Item>
+
+                                            </>
+
+                                        )
+
+                                    }
+                                </Form.Item>
 
 
 
@@ -1151,12 +1180,19 @@ export const ToorPage = observer(props => {
                                     rules={[{ required: true, message: 'Выберите турнир!' }]}
                                 >
                                     <Select placeholder="Выбрать">
-                                        {toorStore.toors.map(toor=> <Select.Option value={toor.id}>{toor.name} {toor.balance}</Select.Option>)}
+                                        {toorStore.toors.filter(toor=>toor.status==='Ожидание').map(toor=> <Select.Option value={toor.id}>{toor.name} {toor.balance}</Select.Option>)}
 
 
                                     </Select>
                                 </Form.Item>
 
+                                                <Form.Item
+                                                    label="Пароль"
+                                                    name="password"
+
+                                                >
+                                                    <Input placeholder="Если необходим"/>
+                                                </Form.Item>
 
                                 <Form.Item wrapperCol={{ offset: 11, span: 5 }}>
                                     <Button disabled={accountStore.loading} type="primary" htmlType="submit">
@@ -1251,6 +1287,39 @@ export const ToorPage = observer(props => {
                                         format="YYYY-MM-DD HH:mm"
                                     />
                                 </Form.Item>
+                                <Form.Item
+                                    label="Приватный"
+                                    name="private"
+                                    valuePropName="checked"
+                                >
+                                    <Checkbox />
+                                </Form.Item>
+                                <Form.Item
+                                    noStyle
+                                    shouldUpdate={(prevValues, currentValues) => prevValues.private !== currentValues.private}
+                                >
+                                    {({getFieldValue}) =>
+                                        getFieldValue('private') === true && (
+                                            <>
+
+
+                                                <Form.Item
+                                                    label="Пароль"
+                                                    name="password"
+                                                    rules={[{required: true,
+                                                        message: '',
+
+                                                    }]}
+                                                >
+                                                    <Input placeholder="Пароль"/>
+                                                </Form.Item>
+
+                                            </>
+
+                                        )
+
+                                    }
+                                </Form.Item>
 
 
 
@@ -1291,10 +1360,17 @@ export const ToorPage = observer(props => {
                                     rules={[{ required: true, message: 'Выберите турнир!' }]}
                                 >
                                     <Select placeholder="Выбрать">
-                                        {toorStore.toors.map(toor=> <Select.Option value={toor.id}>{toor.name} {toor.balance}</Select.Option>)}
+                                        {toorStore.toors.filter(toor=>toor.status==='Ожидание').map(toor=> <Select.Option value={toor.id}>{toor.name} {toor.balance}</Select.Option>)}
 
 
                                     </Select>
+                                </Form.Item>
+                                <Form.Item
+                                    label="Пароль"
+                                    name="password"
+
+                                >
+                                    <Input placeholder="Если необходим"/>
                                 </Form.Item>
 
 

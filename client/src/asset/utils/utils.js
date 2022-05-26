@@ -40,11 +40,11 @@ export   function getSound  (value) {
 
 
 }
-export   function getColorNum  (value) {
+export   function getColorNum  (value, sumbol) {
     if(value > 0){
-      return <span className="greenNum">{value}</span>
+      return <span className="greenNum">{value}{sumbol} </span>
     }else{
-        return <span className="redNum">{value}</span>
+        return <span className="redNum">{value}{sumbol} </span>
     }
 
 

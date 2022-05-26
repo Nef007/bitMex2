@@ -158,7 +158,7 @@ class AccountController {
                         {reverse: true}
                     ),
                     await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
-                        {reverse: true, startTime: new Date(account.starttoor)}
+                        {reverse: true, filter:{"open": true}}
                     ),
 
 
@@ -174,6 +174,7 @@ class AccountController {
                         api=response2
                         positionBit=response3
                         order=response4
+                        console.log(order)
 
 
                     })
@@ -315,6 +316,7 @@ class AccountController {
                                 order = response4
 
 
+
                             })
                             .catch(error => {
                                 console.log('Ошибка получения данных')
@@ -373,6 +375,22 @@ class AccountController {
 
             let {...value} = req.body
 
+
+            if(value.toorId){
+
+               const toor = await Toor.findByPk(value.toorId)
+                if(toor.status==="Активный" || toor.status==="Завершен" ){
+                    return  res.status(400).json({message: 'Ошибка! турнир уже активный или завершен'})
+                }
+
+            if(toor.password && toor.password!==value.password){
+                return  res.status(400).json({message: 'Пароль введен неверно!'})
+            }
+
+
+
+            }
+
             await Account.update({...value}, {
                 where:
                     {
@@ -402,6 +420,380 @@ class AccountController {
 
             res.status(201).json({message: 'Пользователь удален'})
         } catch (e) {
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+
+    getInfo = async (req, res) => {
+        try {
+
+            let account ={
+               // необработанные данные ордеров и баланса
+
+            execution: [], //Получите все необработанные исполнения для своей учетной записи
+                // {
+                //     "execID": "string",
+                //     "orderID": "string",
+                //     "clOrdID": "string",
+                //     "clOrdLinkID": "string",
+                //     "account": 0,
+                //     "symbol": "string",
+                //     "side": "string",
+                //     "lastQty": 0,
+                //     "lastPx": 0,
+                //     "underlyingLastPx": 0,
+                //     "lastMkt": "string",
+                //     "lastLiquidityInd": "string",
+                //     "simpleOrderQty": 0,
+                //     "orderQty": 0,
+                //     "price": 0,
+                //     "displayQty": 0,
+                //     "stopPx": 0,
+                //     "pegOffsetValue": 0,
+                //     "pegPriceType": "string",
+                //     "currency": "string",
+                //     "settlCurrency": "string",
+                //     "execType": "string",
+                //     "ordType": "string",
+                //     "timeInForce": "string",
+                //     "execInst": "string",
+                //     "contingencyType": "string",
+                //     "exDestination": "string",
+                //     "ordStatus": "string",
+                //     "triggered": "string",
+                //     "workingIndicator": true,
+                //     "ordRejReason": "string",
+                //     "simpleLeavesQty": 0,
+                //     "leavesQty": 0,
+                //     "simpleCumQty": 0,
+                //     "cumQty": 0,
+                //     "avgPx": 0,
+                //     "commission": 0,
+                //     "tradePublishIndicator": "string",
+                //     "multiLegReportingType": "string",
+                //     "text": "string",
+                //     "trdMatchID": "string",
+                //     "execCost": 0,
+                //     "execComm": 0,
+                //     "homeNotional": 0,
+                //     "foreignNotional": 0,
+                //     "transactTime": "2022-05-24T19:41:51.559Z",
+                //     "timestamp": "2022-05-24T19:41:51.559Z"
+                // }
+            executionHistory: [], //Получить все исполнения, влияющие на баланс.
+                // {
+            //     "execID": "string",
+            //     "orderID": "string",
+            //     "clOrdID": "string",
+            //     "clOrdLinkID": "string",
+            //     "account": 0,
+            //     "symbol": "string",
+            //     "side": "string",
+            //     "lastQty": 0,
+            //     "lastPx": 0,
+            //     "underlyingLastPx": 0,
+            //     "lastMkt": "string",
+            //     "lastLiquidityInd": "string",
+            //     "simpleOrderQty": 0,
+            //     "orderQty": 0,
+            //     "price": 0,
+            //     "displayQty": 0,
+            //     "stopPx": 0,
+            //     "pegOffsetValue": 0,
+            //     "pegPriceType": "string",
+            //     "currency": "string",
+            //     "settlCurrency": "string",
+            //     "execType": "string",
+            //     "ordType": "string",
+            //     "timeInForce": "string",
+            //     "execInst": "string",
+            //     "contingencyType": "string",
+            //     "exDestination": "string",
+            //     "ordStatus": "string",
+            //     "triggered": "string",
+            //     "workingIndicator": true,
+            //     "ordRejReason": "string",
+            //     "simpleLeavesQty": 0,
+            //     "leavesQty": 0,
+            //     "simpleCumQty": 0,
+            //     "cumQty": 0,
+            //     "avgPx": 0,
+            //     "commission": 0,
+            //     "tradePublishIndicator": "string",
+            //     "multiLegReportingType": "string",
+            //     "text": "string",
+            //     "trdMatchID": "string",
+            //     "execCost": 0,
+            //     "execComm": 0,
+            //     "homeNotional": 0,
+            //     "foreignNotional": 0,
+            //     "transactTime": "2022-05-24T19:40:40.563Z",
+            //     "timestamp": "2022-05-24T19:40:40.563Z"
+            // }
+                funding: [],  //Получить историю финансирования. {
+                // "timestamp": "2022-05-24T19:40:40.588Z",
+                // "symbol": "string",
+                // "fundingInterval": "2022-05-24T19:40:40.588Z",
+                // "fundingRate": 0,
+                // "fundingRateDaily": 0
+           // }
+                globalNotification: [] ,   //Получите ваши текущие GlobalNotifications {
+            //     "id": 0,
+            //     "date": "2022-05-24T19:40:40.602Z",
+            //     "title": "string",
+            //     "body": "string",
+            //     "ttl": 0,
+            //     "type": "success",
+            //     "closable": true,
+            //     "persist": true,
+            //     "waitForVisibility": true,
+            //     "sound": "string"
+            // }
+                order: [],// Заказы  {
+            //     "orderID": "string",
+            //     "clOrdID": "string",
+            //     "clOrdLinkID": "string",
+            //     "account": 0,
+            //     "symbol": "string",
+            //     "side": "string",
+            //     "simpleOrderQty": 0,
+            //     "orderQty": 0,
+            //     "price": 0,
+            //     "displayQty": 0,
+            //     "stopPx": 0,
+            //     "pegOffsetValue": 0,
+            //     "pegPriceType": "string",
+            //     "currency": "string",
+            //     "settlCurrency": "string",
+            //     "ordType": "string",
+            //     "timeInForce": "string",
+            //     "execInst": "string",
+            //     "contingencyType": "string",
+            //     "exDestination": "string",
+            //     "ordStatus": "string",
+            //     "triggered": "string",
+            //     "workingIndicator": true,
+            //     "ordRejReason": "string",
+            //     "simpleLeavesQty": 0,
+            //     "leavesQty": 0,
+            //     "simpleCumQty": 0,
+            //     "cumQty": 0,
+            //     "avgPx": 0,
+            //     "multiLegReportingType": "string",
+            //     "text": "string",
+            //     "transactTime": "2022-05-25T17:59:17.699Z",
+            //     "timestamp": "2022-05-25T17:59:17.699Z"
+            // }
+                position: [], //Позиции    {
+            //     "account": 0,
+            //     "symbol": "string",
+            //     "currency": "string",
+            //     "underlying": "string",
+            //     "quoteCurrency": "string",
+            //     "commission": 0,
+            //     "initMarginReq": 0,
+            //     "maintMarginReq": 0,
+            //     "riskLimit": 0,
+            //     "leverage": 0,
+            //     "crossMargin": true,
+            //     "deleveragePercentile": 0,
+            //     "rebalancedPnl": 0,
+            //     "prevRealisedPnl": 0,
+            //     "prevUnrealisedPnl": 0,
+            //     "prevClosePrice": 0,
+            //     "openingTimestamp": "2022-05-25T17:59:17.796Z",
+            //     "openingQty": 0,
+            //     "openingCost": 0,
+            //     "openingComm": 0,
+            //     "openOrderBuyQty": 0,
+            //     "openOrderBuyCost": 0,
+            //     "openOrderBuyPremium": 0,
+            //     "openOrderSellQty": 0,
+            //     "openOrderSellCost": 0,
+            //     "openOrderSellPremium": 0,
+            //     "execBuyQty": 0,
+            //     "execBuyCost": 0,
+            //     "execSellQty": 0,
+            //     "execSellCost": 0,
+            //     "execQty": 0,
+            //     "execCost": 0,
+            //     "execComm": 0,
+            //     "currentTimestamp": "2022-05-25T17:59:17.796Z",
+            //     "currentQty": 0,
+            //     "currentCost": 0,
+            //     "currentComm": 0,
+            //     "realisedCost": 0,
+            //     "unrealisedCost": 0,
+            //     "grossOpenCost": 0,
+            //     "grossOpenPremium": 0,
+            //     "grossExecCost": 0,
+            //     "isOpen": true,
+            //     "markPrice": 0,
+            //     "markValue": 0,
+            //     "riskValue": 0,
+            //     "homeNotional": 0,
+            //     "foreignNotional": 0,
+            //     "posState": "string",
+            //     "posCost": 0,
+            //     "posCost2": 0,
+            //     "posCross": 0,
+            //     "posInit": 0,
+            //     "posComm": 0,
+            //     "posLoss": 0,
+            //     "posMargin": 0,
+            //     "posMaint": 0,
+            //     "posAllowance": 0,
+            //     "taxableMargin": 0,
+            //     "initMargin": 0,
+            //     "maintMargin": 0,
+            //     "sessionMargin": 0,
+            //     "targetExcessMargin": 0,
+            //     "varMargin": 0,
+            //     "realisedGrossPnl": 0,
+            //     "realisedTax": 0,
+            //     "realisedPnl": 0,
+            //     "unrealisedGrossPnl": 0,
+            //     "longBankrupt": 0,
+            //     "shortBankrupt": 0,
+            //     "taxBase": 0,
+            //     "indicativeTaxRate": 0,
+            //     "indicativeTax": 0,
+            //     "unrealisedTax": 0,
+            //     "unrealisedPnl": 0,
+            //     "unrealisedPnlPcnt": 0,
+            //     "unrealisedRoePcnt": 0,
+            //     "simpleQty": 0,
+            //     "simpleCost": 0,
+            //     "simpleValue": 0,
+            //     "simplePnl": 0,
+            //     "simplePnlPcnt": 0,
+            //     "avgCostPrice": 0,
+            //     "avgEntryPrice": 0,
+            //     "breakEvenPrice": 0,
+            //     "marginCallPrice": 0,
+            //     "liquidationPrice": 0,
+            //     "bankruptPrice": 0,
+            //     "timestamp": "2022-05-25T17:59:17.796Z",
+            //     "lastPrice": 0,
+            //     "lastValue": 0
+            // }
+                user:{},
+                affiliateStatus:{},
+                commission: {},
+                depositAddress: {},
+                margin: {},
+                minWithdrawalFee: {},
+                tradingVolume: [],
+                wallet: {},
+                walletHistory: {},
+                walletSummary: [],
+            }
+
+
+          const  acc = await Account.findByPk(req.user.id)
+
+
+            const arr = [
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/execution',
+                    {symbol: "XBT", reverse: true}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/execution/tradeHistory',
+                    {symbol: "XBT", reverse: true}
+                ),
+
+
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/funding',
+                    {symbol: "XBT", reverse: true}
+                ),
+                // await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/globalNotification',
+                //
+                // ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/order',
+                    {symbol: "XBT", reverse: true}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/position',
+                    {count: 100}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user',
+                    {}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/affiliateStatus',
+                    {currency: "XBt"}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/commission',
+                    {}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/depositAddress',
+                    {currency: "XBt"}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/margin',
+                    {currency: "XBt"}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/minWithdrawalFee',
+                    {currency: "XBt"}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/tradingVolume',
+                    {}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/wallet',
+                    {}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletHistory',
+                    {currency: "XBt"}
+                ),
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletSummary',
+                    {currency: "XBt"}
+                ),
+
+
+
+
+            ]
+
+            await Promise.all(arr)
+                .then(([response1,
+                            response2,
+                           response3,
+                         //  response4,
+                           response5,
+                            response6, response7, response8, response9, response10,
+                            response11,response12, response13,response14,response15,response16,
+
+                       ]) => {
+
+                    account.execution=response1
+                     account.executionHistory=response2
+                    account.funding=response3
+                   // account.globalNotification=response4
+                    account.order=response5
+                    account.position=response6
+                    account.user=response7
+                    account.affiliateStatus=response8
+                    account.commission=response9
+                    account.depositAddress=response10
+                    account.margin=response11
+                    account.minWithdrawalFee=response12
+                    account.tradingVolume=response13
+                    account.wallet=response14
+                    account.walletHistory=response15
+                    account.walletSummary=response16
+
+
+
+                })
+                .catch(error => {
+                    console.log('Ошибка получения данных')
+                    throw error
+                })
+
+
+            console.log(account)
+
+
+
+            res.json(account);
+        } catch (e) {
+            console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
         }
     };

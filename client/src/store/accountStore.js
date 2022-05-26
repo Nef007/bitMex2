@@ -10,6 +10,7 @@ import {current_user} from "./currentUser";
 
 export const accountStore = makeAutoObservable({
     accounts: [],
+    account: {},
     loading: false,
 
     loadingDataUser:{
@@ -91,6 +92,17 @@ export const accountStore = makeAutoObservable({
         } catch (e) {
             notification.setInfo('error', e.message)
             this.setLoadingGetData(id)
+        }
+    },
+    async getInfo(id) {
+        this.setLoading()
+        try {
+            this.account = await accountAPI.getInfo(id,localStorage.getItem('userData'));
+
+            this.setLoading()
+        } catch (e) {
+            notification.setInfo('error', e.message)
+            this.setLoading()
         }
     },
 

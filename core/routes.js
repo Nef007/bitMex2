@@ -117,6 +117,7 @@ const createRoutes = (app, io) => {
      app.get("/accounts", checkAuth, updateLastSeen,  AccountController.accounts);
      app.get("/account/:id", checkAuth, updateLastSeen, AccountController.getData);
      app.get("/accounts_data/:id", checkAuth, updateLastSeen, AccountController.getDataAll);
+     app.get("/accounts_info/:id", checkAuth, updateLastSeen, AccountController.getInfo);
      app.delete("/account/:id", checkAuth, updateLastSeen, AccountController.delete);
      app.put("/account/:id",  checkAuth, updateLastSeen,   AccountController.change);
 
@@ -132,6 +133,7 @@ const createRoutes = (app, io) => {
      app.get("/sys_time",  checkAuth, updateLastSeen,   AppController.getTime);
      app.post("/sys_time",  checkAuth, updateLastSeen,   AppController.setTime);
      app.get("/sys_log",  checkAuth, updateLastSeen,   AppController.getLog);
+     app.get("/sys_index",    AppController.getIndex);
      app.delete("/sys_log",  checkAuth, updateLastSeen,   AppController.deleteLog);
 
     // app.post("/report",    ServerController.report);

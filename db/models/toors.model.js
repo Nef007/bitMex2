@@ -27,6 +27,14 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
 
         },
+        private: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
+        password: {
+            type: Sequelize.STRING,
+
+        },
         status: {
             type: Sequelize.STRING,
             allowNull: false,

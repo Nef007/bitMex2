@@ -16,10 +16,10 @@ module.exports = async (apiKey, apiSecret, verb, endpoint, data = {})=>{
         // and in the signature. If you don't do this, you might get differently-sorted keys and blow the signature.
         postBody = JSON.stringify(data);
 
-    const signature = crypto.createHmac('sha256', apiSecret)
-        .update(verb + apiRoot + endpoint + query + expires + postBody).digest('hex');
+    const signature = apiSecret ? crypto.createHmac('sha256', apiSecret)
+        .update(verb + apiRoot + endpoint + query + expires + postBody).digest('hex') : '';
 
-    const headers = {
+    const headers = apiKey &&  apiSecret ? {
         'content-type': 'application/json',
         'accept': 'application/json',
         // This example uses the 'expires' scheme. You can also use the 'nonce' scheme. See
@@ -27,7 +27,11 @@ module.exports = async (apiKey, apiSecret, verb, endpoint, data = {})=>{
         'api-expires': expires,
         'api-key': apiKey,
         'api-signature': signature,
-    };
+    } : {
+        'content-type': 'application/json',
+        'accept': 'application/json',
+
+    } ;
 
     const requestOptions = {
         method: verb,

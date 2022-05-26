@@ -16,6 +16,7 @@ import {MainPage} from "../../component/MainPage";
 import {ToorPage} from "./ToorPage";
 import TeamOutlined from "@ant-design/icons/lib/icons/TeamOutlined";
 import TrophyOutlined from "@ant-design/icons/lib/icons/TrophyOutlined";
+import {InfoPage} from "./InfoPage";
 
 
 
@@ -67,6 +68,7 @@ export const AppPage = observer(() => {
                        <Route path="/about/" element={<AboutProgramPage/>}/>
                        <Route path="/main" element={<TitlePage/>}/>
                        <Route path="/account" element={<AccountPage/>}/>
+                       <Route path="/account/:id" element={<InfoPage/>}/>
                        <Route path="/toors" element={<ToorPage/>}/>
                        <Route path="/*" element={<Navigate replace to="/bit/main"/>}/>
                    </Routes>}

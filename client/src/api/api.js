@@ -135,6 +135,9 @@ export const systemAPI = {
             Authorization: `Bearer ${token}`,
         },);
     },
+    getIndex() {
+        return request(`/sys_index/`, 'GET', null);
+    },
     deleteLog(token) {
         return request(`/sys_log/`, 'DELETE', null, {
             Authorization: `Bearer ${token}`,
@@ -349,6 +352,12 @@ export const accountAPI = {
     },
     getData(id, token) {
         return  request(`/account/${id}`, 'GET', null, {
+            Authorization: `Bearer ${token}`
+        })
+
+    },
+    getInfo(id, token) {
+        return  request(`/accounts_info/${id}`, 'GET', null, {
             Authorization: `Bearer ${token}`
         })
 

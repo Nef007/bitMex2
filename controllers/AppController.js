@@ -5,6 +5,7 @@ const Version = dbSeq.versions
 const User = dbSeq.users
 const SettingsApp = dbSeq.setting_app
 const {Op} = require("sequelize");
+const request_bitmex = require("../utils/request_bitmex");
 
 
 
@@ -215,6 +216,22 @@ class AppController {
             })
 
             res.json({message: "Сохранено"});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+        }
+    };
+
+    getIndex = async (req, res) => {
+        try {
+
+          let dataIndex =  await request_bitmex(null, null, 'GET', '/instrument/active',
+                {}
+            )
+
+            dataIndex =  dataIndex.filter(item=>item.rootSymbol==="XBT")
+
+            res.json(dataIndex);
         } catch (e) {
             console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});

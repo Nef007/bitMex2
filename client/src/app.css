@@ -11,7 +11,7 @@
 header {
   grid-area: header;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   min-width: 320px;
 }
 
@@ -204,9 +204,6 @@ footer {
   width: 100%; }
 
 
-.greenNum {
-  color: #2a8922; }
-.redNum {
-  color: #db3434; }
+
 
 

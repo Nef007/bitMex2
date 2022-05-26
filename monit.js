@@ -79,8 +79,6 @@ async function start() {
 
                         ]
 
-
-
                         await Promise.all(arr)
                             .then(([response1, response2, response3, response4, response5  ]) => {
 
@@ -173,7 +171,7 @@ async function start() {
             await logger(`Finish active turnament ${toor.id}`)
 
         }  // конец активации тура
-        //  проверка во время тура
+
 
         // конец тура
         if (new Date(toor.end) <= new Date() && toor.status === "Активный") {

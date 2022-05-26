@@ -7,6 +7,7 @@ import {v4 as uuid} from "uuid";
 
 export const system = makeAutoObservable({
     timeupdate: 60,
+    index: [],
     log: [],
     filesDownloader: [],
     allVersions: [],
@@ -104,6 +105,20 @@ export const system = makeAutoObservable({
         try {
             this.setLoading()
             this.log = await systemAPI.getLog( localStorage.getItem('userData'))
+
+            this.setLoading()
+        } catch (e) {
+            this.setLoading()
+            notification.setInfo('error', e.message)
+            if(e.message==="Не действительный токен"){
+                current_user.logout()
+            }
+        }
+    },
+    async getIndex() {
+        try {
+            this.setLoading()
+            this.index = await systemAPI.getIndex( )
 
             this.setLoading()
         } catch (e) {

@@ -35,7 +35,7 @@ class ToorController {
 
     create = async (req, res) => {
         try {
-            const {name, balance, ...date} = req.body
+            const {name, balance,  date, ...value} = req.body
             let status
             const userId = req.user.id
 
@@ -48,20 +48,23 @@ class ToorController {
                 raw: true
             })
             if (candidate) {
-                res.status(400).json({message: 'Такой турнир уже существует'})
+              return  res.status(400).json({message: 'Такой турнир уже существует'})
             }
 
-            if (new Date(date.date[0]) < new Date() && new Date(date.date[1]) > new Date()) {
-                status = "Активный"
-            } else if (new Date(date.date[0]) > new Date()) {
+
+
+            if (new Date(date[0]) < new Date() && new Date(date[1]) > new Date()) {
+                return  res.status(400).json({message: 'Дата начала должна быть больше текущей'})
+            } else if (new Date(date[0]) > new Date()) {
                 status = "Ожидание"
-            } else status = "Завершен"
+            } else  return  res.status(400).json({message: 'Дата завершения должна быть больше текущей'})
 
             await Toor.create({
+                ...value,
                 name,
                 balance,
-                start: date.date[0],
-                end: date.date[1],
+                start: date[0],
+                end: date[1],
                 status,
                 userId
             })
@@ -79,8 +82,16 @@ class ToorController {
             const { date, ...value} = req.body
             const id = req.params.id
 
+            let status
+
 
             if(date){
+                if (new Date(date[0]) < new Date() && new Date(date[1]) > new Date()) {
+                    return  res.status(400).json({message: 'Дата начала должна быть больше текущей'})
+                } else if (new Date(date.date[0]) > new Date()) {
+                    status = "Ожидание"
+                } else  return  res.status(400).json({message: 'Дата завершения должна быть больше текущей'})
+
                 value.start=date[0]
                 value.end=date[1]
             }
@@ -88,6 +99,7 @@ class ToorController {
 
             await Toor.update({
                 ...value,
+                status
             }, {
                 where:
                     {
@@ -150,7 +162,8 @@ class ToorController {
 
             const userId = req.user.id
 
-            const toors = await Toor.findAll({
+            let toors = await Toor.findAll({
+
                 include:[{
                     model: Account,
                     attributes: [],
@@ -162,15 +175,17 @@ class ToorController {
                     include: [
                         [dbSeq.sequelize.literal(`(SELECT  SUM(balance) FROM accounts WHERE "accounts"."toorId" = toors.id)`,
                         ), 'turn'
-                        ],
+                        ]
 
                     ]
                 },
                 order: [['start', 'DESC'] ],
-                raw: true
+               // raw: true
 
 
             })
+
+            toors = JSON.parse(JSON.stringify(toors))
 
             for (let toor of toors) {
 
