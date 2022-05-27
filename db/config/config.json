@@ -23,7 +23,7 @@
   },
   "production": {
     "username": "postgres",
-    "password": "12345678",
+    "password": "123",
     "port": 5432,
     "database": "bitmex",
     "host": "localhost",
