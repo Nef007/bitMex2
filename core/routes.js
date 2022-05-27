@@ -65,6 +65,9 @@ const createRoutes = (app, io) => {
         app.get('/bit*', (req, res) => {
             res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'))
         })
+        app.get('/admin*', (req, res) => {
+            res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'))
+        })
 
     }
      app.get("/user/me", checkAuth, updateLastSeen, UserController.me);
