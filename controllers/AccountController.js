@@ -299,7 +299,7 @@ class AccountController {
                                 {reverse: true}
                             ),
                             await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
-                                {reverse: true, startTime: new Date(account.starttoor)}
+                                {reverse: true, filter:{"open": true}}
                             ),
 
 

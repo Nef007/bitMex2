@@ -10,6 +10,7 @@ import {useRootStore} from "../../store";
 import {useParams} from "react-router-dom";
 import {Button, Table} from "antd";
 import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
+import {Loader} from "../../component/Loader";
 
 
 
@@ -129,6 +130,10 @@ export const InfoPage = observer(props => {
         <>
             <div className="title">Информация</div>
             <div className="contentCollum">
+
+                {(!accountStore.account.user) ?
+                    <Loader/>
+                    :
                 <div>
                     <div>
                         {accountStore.account.user && Object.keys(accountStore.account.user).map(key =>{
@@ -148,7 +153,7 @@ export const InfoPage = observer(props => {
                         }
                     </div>
                     <div>depositAddress: {accountStore.account.depositAddress}</div>
-                </div>
+                </div>}
 
                 <div className="title">Выполняющие ордеры</div>
                     <Table scroll={{x: 700 }}

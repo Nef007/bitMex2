@@ -113,19 +113,24 @@ footer {
   border-radius: 20px;
   height: calc(100% - 35px);
   display: flex;
-  width: calc(100vw - 287px);
+  width: calc(100vw - 278px);
   padding: 10px;
   justify-content: center;
   flex-wrap: wrap;
   min-width: 300px;
+}
+.contentTable {
+  margin: 6px 0 0 -30px;
+  width: calc(100vw - 278px);
+
 }
 
 .contentOut {
   position: relative;
   background-color: white;
   border-radius: 20px;
-  padding: 10px;
-  width: 100%;
+  /*padding: 10px;*/
+  width: calc(100vw - 287px);
 }
 
 

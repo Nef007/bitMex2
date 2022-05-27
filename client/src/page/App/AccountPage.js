@@ -822,8 +822,8 @@ export const AccountPage = observer(props => {
                     </Form>
                 </Modal>
 
-                <Button type="primary" onClick={() => setActiveAddGroup()}>Создать группу</Button >  <Tooltip title="Добавить">
-                <Button  onClick={()=>setActiveAddUser()} type="primary">
+                <Button className="mr10" type="primary" onClick={() => setActiveAddGroup()}>Создать группу</Button >  <Tooltip title="Добавить">
+                <Button className="mr10" onClick={()=>setActiveAddUser()} type="primary">
                     <UserAddOutlined />
                 </Button>
 
@@ -831,9 +831,9 @@ export const AccountPage = observer(props => {
             <Button onClick={onUpdateGroup} type="primary">Обновить все</Button>}
 
                 {groups.length > 0 ?
-                    <div className="table-box">
+
                         <Table
-                            scroll={{x: 700}}
+                            size="small"
                             loading={groupStore.loading}
                             expandable={{
                                 expandedRowRender: group => {
@@ -910,19 +910,24 @@ export const AccountPage = observer(props => {
                                             <div>
                                                 <img className="icons" src={mans} alt="man"/>
                                             </div>
+                                            <div className='contentTable'>
+                                                <Table
+                                                    scroll={{x: 600}}
+                                                    size="small"
+                                                    dataSource={group.isRevers ? humansRevers : humans}
+                                                    loading={accountStore.loading}
+                                                    columns={ group.isRevers ? subcolumnsRevers :subcolumns}
+                                                    onChange={onChangeTable}
+                                                >
 
-                                            <Table
-                                                size="small"
-                                                dataSource={group.isRevers ? humansRevers : humans}
-                                                loading={accountStore.loading}
-                                                columns={ group.isRevers ? subcolumnsRevers :subcolumns}
-                                                onChange={onChangeTable}
-                                            >
+                                                </Table>
 
-                                            </Table>
+                                            </div>
 
                                             <img className="icons" src={robots} alt="man"/>
+                                            <div className='contentTable'>
                                             <Table
+                                                scroll={{x: 600}}
                                                 size="small"
                                                 dataSource={group.isRevers ? botRevers : bot}
                                                 loading={accountStore.loading}
@@ -930,6 +935,7 @@ export const AccountPage = observer(props => {
                                                 onChange={onChangeTable}
                                             >
                                             </Table>
+                                            </div>
 
                                         </React.Fragment>
                                     )
@@ -940,11 +946,7 @@ export const AccountPage = observer(props => {
                             dataSource={groups}
                             columns={columns}
                         >
-
-
                         </Table>
-
-                    </div>
 
                     :  groupStore.loading ? <Loader/> :  <div className="imgBox">
                         <img className="img" src={logo} alt="Картинка"/>

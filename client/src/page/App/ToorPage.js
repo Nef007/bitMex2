@@ -937,9 +937,9 @@ export const ToorPage = observer(props => {
                     <Button onClick={onUpdateMyToor} type="primary">Обновить</Button>}
 
                         {toors.length > 0 ?
-                            <div className="table-box">
+
                                 <Table
-                                    scroll={{x: 700}}
+
                                     loading={toorStore.loading}
                                     expandable={{
                                         expandedRowRender: toor => {
@@ -1011,8 +1011,9 @@ export const ToorPage = observer(props => {
                                                     <div>
                                                         <img className="icons" src={mans} alt="man"/>
                                                     </div>
-
+                                                    <div className='contentTable'>
                                                     <Table
+                                                        scroll={{x: 700}}
                                                         size="small"
                                                         dataSource={humans}
                                                         loading={accountStore.loading}
@@ -1021,9 +1022,12 @@ export const ToorPage = observer(props => {
                                                     >
 
                                                     </Table>
+                                                    </div>
 
                                                     <img className="icons" src={robots} alt="man"/>
+                                                    <div className='contentTable'>
                                                     <Table
+                                                        scroll={{x: 700}}
                                                         size="small"
                                                         dataSource={bot}
                                                         loading={accountStore.loading}
@@ -1031,6 +1035,7 @@ export const ToorPage = observer(props => {
                                                         onChange={onChangeTable}
                                                     >
                                                     </Table>
+                                                    </div>
 
                                                 </React.Fragment>
                                             )
@@ -1045,7 +1050,7 @@ export const ToorPage = observer(props => {
 
                                 </Table>
 
-                            </div>
+
 
                             :  toorStore.loading ? <Loader/> :  <div className="imgBox">
                                 <img className="img" src={logo} alt="Картинка"/>
@@ -1391,9 +1396,9 @@ export const ToorPage = observer(props => {
                     <Button onClick={onUpdateToorAdmin} type="primary">Обновить</Button>}
 
                         {toors.length > 0 ?
-                            <div className="table-box">
+
                                 <Table
-                                    scroll={{x: 700}}
+
                                     loading={toorStore.loading}
                                     expandable={{
                                         expandedRowRender: toor => {
@@ -1465,8 +1470,9 @@ export const ToorPage = observer(props => {
                                                     <div>
                                                         <img className="icons" src={mans} alt="man"/>
                                                     </div>
-
+                                                    <div className='contentTable'>
                                                     <Table
+                                                        scroll={{x: 700}}
                                                         size="small"
                                                         dataSource={humans}
                                                         loading={accountStore.loading}
@@ -1474,10 +1480,14 @@ export const ToorPage = observer(props => {
                                                         onChange={onChangeTable}
                                                     >
 
+
                                                     </Table>
+                                                    </div>
 
                                                     <img className="icons" src={robots} alt="man"/>
+                                                    <div className='contentTable'>
                                                     <Table
+                                                        scroll={{x: 700}}
                                                         size="small"
                                                         dataSource={bot}
                                                         loading={accountStore.loading}
@@ -1485,6 +1495,7 @@ export const ToorPage = observer(props => {
                                                         onChange={onChangeTable}
                                                     >
                                                     </Table>
+                                                    </div>
 
                                                 </React.Fragment>
                                             )
@@ -1499,7 +1510,7 @@ export const ToorPage = observer(props => {
 
                                 </Table>
 
-                            </div>
+
 
                             :  toorStore.loading ? <Loader/> :  <div className="imgBox">
                                 <img className="img" src={logo} alt="Картинка"/>

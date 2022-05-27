@@ -26,9 +26,12 @@
     height: calc(100% - 35px);
     display: flex;
     width: calc(100vw - 287px);
-    padding: 10px;
     justify-content: center;
     flex-wrap: wrap;
     min-width: 300px;
     flex-direction: column;
+}
+
+.table-box{
+    width: 100%;
 }
