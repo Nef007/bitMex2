@@ -25,6 +25,8 @@ import ArrowDownOutlined from "@ant-design/icons/lib/icons/ArrowDownOutlined";
 import SwapOutlined from "@ant-design/icons/lib/icons/SwapOutlined";
 import ReloadOutlined from "@ant-design/icons/lib/icons/ReloadOutlined";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
+import RiseOutlined from "@ant-design/icons/lib/icons/RiseOutlined";
+import FallOutlined from "@ant-design/icons/lib/icons/FallOutlined";
 
 export const MainPage = observer(({service, title, menu, route, prefix, current_user}) => {
 
@@ -83,8 +85,8 @@ export const MainPage = observer(({service, title, menu, route, prefix, current_
 
                         {system.index.map(item=><Popover
                             content={ <div>
-                            <p><ArrowUpOutlined style={{color: "red"}} /> {item.highPrice}</p>
-                            <p><ArrowDownOutlined style={{color: "green"}} /> {item.lowPrice}</p>
+                            <p><RiseOutlined  style={{color: "green"}} /> {item.highPrice}</p>
+                            <p><FallOutlined style={{color: "red"}} /> {item.lowPrice}</p>
                             <p><SwapOutlined style={{color: "blue"}} /> {item.lastPrice}</p>
                         </div>
                         } title={item.symbol} trigger="hover"><Tag><b>{item.symbol}</b> {(item.lastPrice).toFixed(2)} {getColorNum((((item.lastPrice-item.prevPrice24h)/item.prevPrice24h)*100).toFixed(2),'%')}</Tag>  </Popover>)}
