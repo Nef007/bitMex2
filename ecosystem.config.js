@@ -37,17 +37,16 @@ module.exports = {
 
   }],
   deploy : {
-    production : {
-      user : "root",
-      host : "10.40.52.222",
-      repo : "http://10.40.52.236/nef007/parsiv.git",
-      ref  : "origin/master",
-      path : "/home/parsiv",
-      'post-deploy' : "pm2 startOrRestart ecosystem.config.js",
-      env: {
-        NODE_ENV: "production"
-      }
-    },
-
-  }
+    deploy : {
+      production : {
+        user: "root",
+        host: "45.84.226.201",
+        repo: "https://github.com/Nef007/bitMex2.git",
+        ref: "origin/master",
+        path: "/home/bitmex2",
+        'post-deploy': " pm2 startOrRestart ecosystem.config.js",
+        env: {
+          NODE_ENV: "production",
+        }
+      }}}
 }
