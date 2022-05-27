@@ -36,7 +36,6 @@ module.exports = {
     },
 
   }],
-  deploy : {
     deploy : {
       production : {
         user: "root",
@@ -48,5 +47,5 @@ module.exports = {
         env: {
           NODE_ENV: "production",
         }
-      }}}
+      }}
 }
