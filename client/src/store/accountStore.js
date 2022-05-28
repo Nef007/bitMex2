@@ -95,8 +95,10 @@ export const accountStore = makeAutoObservable({
         }
     },
     async getInfo(id) {
+        this.account=[]
         this.setLoading()
         try {
+
             this.account = await accountAPI.getInfo(id,localStorage.getItem('userData'));
 
             this.setLoading()

@@ -107,10 +107,7 @@ class UserController {
             const candidate = await User.findOne({
                 where:
                     {
-                        email,
-                        status: {
-                            [Op.in]: [ 'Активный','Временный']
-                        }
+                        email
                     },
                 raw: true
             })

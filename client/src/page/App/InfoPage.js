@@ -131,7 +131,7 @@ export const InfoPage = observer(props => {
             <div className="title">Информация</div>
             <div className="contentCollum">
 
-                {(!accountStore.account.user) ?
+                {(!accountStore.account.user || accountStore.loading) ?
                     <Loader/>
                     :
                 <div>
