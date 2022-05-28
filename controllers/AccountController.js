@@ -449,7 +449,7 @@ class AccountController {
             }
 
 
-          const  acc = await Account.findByPk(req.user.id)
+          const  acc = await Account.findByPk(req.params.id)
 
 
             const arr = [
