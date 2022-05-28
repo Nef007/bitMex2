@@ -61,9 +61,9 @@ class AccountController {
 
                 if (e.code === 401) {
                     return res.status(400).json({message: 'Ошибка получения данных c BitMex.  Invalid API Key.'})
-                }
+                }else   return res.status(400).json({message: 'Ошибка получения данных c BitMex'})
 
-                return res.status(400).json({message: 'Ошибка получения данных c BitMex'})
+
             }
 
 
