@@ -58,6 +58,11 @@ class AccountController {
 
             } catch (e) {
                 console.log(moment(Date.now()).format("HH:mm DD.MM.YYYY"),e)
+
+                if (e.code === 401) {
+                    return res.status(400).json({message: 'Ошибка получения данных c BitMex.  Invalid API Key.'})
+                }
+
                 return res.status(400).json({message: 'Ошибка получения данных c BitMex'})
             }
 
