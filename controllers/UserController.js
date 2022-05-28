@@ -8,6 +8,7 @@ const dbSeq = require("../db/models/index");
 const User = dbSeq.users
 const Log = dbSeq.logs
 const Setting = dbSeq.settings
+const Account = dbSeq.accounts
 const AccessService = dbSeq.access_service
 const {Op} = require("sequelize");
 
@@ -31,6 +32,12 @@ class UserController {
 
             let user = await User.findOne({
                 include: [Setting],
+                attributes: {
+                    include: [
+                        [dbSeq.sequelize.literal(`(SELECT  count(*) FROM accounts WHERE "accounts"."userId" = users.id)`,
+                        ), 'count_account'
+                        ],]
+                },
                 where: {
                     id
                 },

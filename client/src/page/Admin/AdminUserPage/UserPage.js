@@ -119,7 +119,7 @@ export const UserPage = observer((props) => {
                                             Аккаунтов:
                                         </div>
                                         <div className="col">
-                                           5
+                                            {user.count_account}
                                         </div>
                                     </div>
                                     <div className="row between">
