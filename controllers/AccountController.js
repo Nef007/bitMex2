@@ -46,6 +46,8 @@ class AccountController {
             const {  groupId, ...account} = req.body
 
            // const group = await Group.findByPk(groupId)
+            account.apikey=account.apikey.trim()
+            account.apisecret=account.apisecret.trim()
 
             try {
 
