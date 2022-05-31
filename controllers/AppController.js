@@ -229,7 +229,7 @@ class AppController {
                 {}
             )
 
-            dataIndex =  dataIndex.filter(item=>item.rootSymbol==="XBT")
+            dataIndex =  dataIndex.filter(item=>item.rootSymbol==="XBT" && item.state==="Open")
 
             res.json(dataIndex);
         } catch (e) {
