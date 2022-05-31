@@ -4,6 +4,7 @@ const Log = dbSeq.logs_app
 const Version = dbSeq.versions
 const User = dbSeq.users
 const SettingsApp = dbSeq.setting_app
+const Notification = dbSeq.notification
 const {Op} = require("sequelize");
 const request_bitmex = require("../utils/request_bitmex");
 
