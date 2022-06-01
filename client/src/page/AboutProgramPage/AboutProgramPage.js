@@ -131,7 +131,7 @@ export const AboutProgramPage = observer(props => {
     return (
 
         <>
-            <div className="title">О приложении</div>
+            <div className="title">Новости</div>
             <div className="contentOut">
 
 

@@ -230,9 +230,57 @@ class AppController {
                 {}
             )
 
-            dataIndex =  dataIndex.filter(item=>item.rootSymbol==="XBT" && item.state==="Open")
 
-            res.json(dataIndex);
+            let arr = []
+
+            dataIndex= dataIndex.filter(item=>item.state==="Open" && item.highPrice && item.lowPrice && item.lastPrice && item.prevPrice24h  )
+
+            for(let index of dataIndex ){
+
+               let temp_obj={
+                   rootSymbol: index.rootSymbol,
+                   tikets: [],
+                   highPrice: 0,
+                   lowPrice: 0,
+                   lastPrice: 0
+                }
+
+                const existing =  arr.findIndex((item=>index.rootSymbol === item.rootSymbol))
+
+                if(existing !== -1){
+
+                    if(index.quoteCurrency==="USDT"){
+
+                        arr[existing] = {...arr[existing],
+                            highPrice: index.highPrice,
+                            lowPrice: index.lowPrice,
+                            lastPrice: index.lastPrice,
+                            prevPrice24h: index.prevPrice24h,
+                            tikets: arr[existing].tikets.concat(index) }
+                    }else
+
+                    arr[existing] = {...arr[existing], tikets: arr[existing].tikets.concat(index) }
+                }else {
+
+                    if(index.quoteCurrency==="USDT"){
+
+                        arr.push({...temp_obj,
+                            highPrice: index.highPrice,
+                            lowPrice: index.lowPrice,
+                            lastPrice: index.lastPrice,
+                            prevPrice24h: index.prevPrice24h,
+
+                        })
+
+                    }else arr.push(temp_obj)
+                }
+            }
+
+
+
+          //  dataIndex =  dataIndex.filter(item=>item.rootSymbol==="XBT" && item.state==="Open")
+
+            res.json(arr);
         } catch (e) {
             console.log(e)
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});

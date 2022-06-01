@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Link, Navigate, NavLink, Route, Routes} from 'react-router-dom';
-import {Badge, Button, Dropdown, Menu, message, Popover, Tag} from "antd";
+import {Badge, Button, Dropdown, Menu, message, Popover, Tabs, Tag} from "antd";
 
 import "../auth.css";
 import "../app.css";
@@ -27,6 +27,8 @@ import ReloadOutlined from "@ant-design/icons/lib/icons/ReloadOutlined";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 import RiseOutlined from "@ant-design/icons/lib/icons/RiseOutlined";
 import FallOutlined from "@ant-design/icons/lib/icons/FallOutlined";
+
+const { TabPane } = Tabs;
 
 export const MainPage = observer(({service, title, menu, route, prefix, current_user}) => {
 
@@ -76,22 +78,72 @@ export const MainPage = observer(({service, title, menu, route, prefix, current_
    // let indx =  system.index.filter(item=>item.rootSymbol==="XBT")
 
 
+    let tabs = system.index.map((item, index)=> <TabPane tab={ <Popover
+        content={<div>
+            <p><RiseOutlined style={{color: "green"}}/> {item.highPrice}</p>
+            <p><FallOutlined style={{color: "red"}}/> {item.lowPrice}</p>
+            <p><SwapOutlined style={{color: "blue"}}/> {item.lastPrice}</p>
+        </div>
+        } title={item.symbol}
+        trigger="hover"><Tag><b>{item.rootSymbol}</b> {(item.lastPrice).toFixed(2)} {getColorNum((((item.lastPrice - item.prevPrice24h) / item.prevPrice24h) * 100).toFixed(2), '%')}
+    </Tag> </Popover>} key={index}>
+        {item.tikets.map(jtem=> {
+
+            if(jtem.highPrice && jtem.lowPrice && jtem.lastPrice ){
+                return (
+                    <Popover
+                        content={<div>
+                            <p><RiseOutlined style={{color: "green"}}/> {jtem.highPrice}</p>
+                            <p><FallOutlined style={{color: "red"}}/> {jtem.lowPrice}</p>
+                            <p><SwapOutlined style={{color: "blue"}}/> {jtem.lastPrice}</p>
+                        </div>
+                        } title={jtem.symbol}
+                        trigger="hover"><Tag><b>{jtem.symbol}</b> {(jtem.lastPrice).toFixed(2)} {getColorNum((((jtem.lastPrice - jtem.prevPrice24h) / jtem.prevPrice24h) * 100).toFixed(2), '%')}
+                    </Tag> </Popover>
+                )
+            }
+        }   )}
+    </TabPane>)
+
+
+
+   // let defaultActiveKey = String(system.index.findIndex((item=> item.rootSymbol==="XBT")))
+
+  //  console.log(defaultActiveKey)
 
     return (
         isAuth && user.access_services && user.access_services.map(item=> item.service).includes(service) ?
             <div className="wrapper">
                 <header>
-                    <div>
+                        <Tabs
+                            defaultActiveKey={system.defaultActiveKey}
+                            size='small'
+                            type="card">
+                            {tabs}
+                        </Tabs>
 
-                        {system.index.map(item=><Popover
-                            content={ <div>
-                            <p><RiseOutlined  style={{color: "green"}} /> {item.highPrice}</p>
-                            <p><FallOutlined style={{color: "red"}} /> {item.lowPrice}</p>
-                            <p><SwapOutlined style={{color: "blue"}} /> {item.lastPrice}</p>
-                        </div>
-                        } title={item.symbol} trigger="hover"><Tag><b>{item.symbol}</b> {(item.lastPrice).toFixed(2)} {getColorNum((((item.lastPrice-item.prevPrice24h)/item.prevPrice24h)*100).toFixed(2),'%')}</Tag>  </Popover>)}
 
-                    </div>
+                        {/*{system.index.map(item=> {*/}
+
+                        {/*    if(item.highPrice && item.lowPrice && item.lastPrice ){*/}
+                        {/*        return (*/}
+                        {/*            <Popover*/}
+                        {/*                content={<div>*/}
+                        {/*                    <p><RiseOutlined style={{color: "green"}}/> {item.highPrice}</p>*/}
+                        {/*                    <p><FallOutlined style={{color: "red"}}/> {item.lowPrice}</p>*/}
+                        {/*                    <p><SwapOutlined style={{color: "blue"}}/> {item.lastPrice}</p>*/}
+                        {/*                </div>*/}
+                        {/*                } title={item.symbol}*/}
+                        {/*                trigger="hover"><Tag><b>{item.symbol}</b> {(item.lastPrice).toFixed(2)} {getColorNum((((item.lastPrice - item.prevPrice24h) / item.prevPrice24h) * 100).toFixed(2), '%')}*/}
+                        {/*            </Tag> </Popover>*/}
+                        {/*        )*/}
+                        {/*    }*/}
+
+
+                        {/*    }*/}
+                        {/*)}*/}
+
+
                     <div className="profileMenu">
                         <Button className='mr10' onClick={()=> system.getIndex()}>{!system.loading ? <ReloadOutlined  /> : <LoadingOutlined /> }</Button>
                         <Notification data={current_user.notification} onSee={(arr) => current_user.seen(arr)}

@@ -12,6 +12,7 @@ export const system = makeAutoObservable({
     filesDownloader: [],
     allVersions: [],
     version: {},
+    defaultActiveKey: "1",
     loading: false,
 
     async createVersion(from) {
@@ -119,6 +120,8 @@ export const system = makeAutoObservable({
         try {
             this.setLoading()
             this.index = await systemAPI.getIndex( )
+
+           this.defaultActiveKey = String(system.index.findIndex((item=> item.rootSymbol==="XBT")))
 
             this.setLoading()
         } catch (e) {

@@ -17,6 +17,7 @@ import {ToorPage} from "./ToorPage";
 import TeamOutlined from "@ant-design/icons/lib/icons/TeamOutlined";
 import TrophyOutlined from "@ant-design/icons/lib/icons/TrophyOutlined";
 import {InfoPage} from "./InfoPage";
+import NotificationOutlined from "@ant-design/icons/lib/icons/NotificationOutlined";
 
 
 
@@ -58,6 +59,17 @@ export const AppPage = observer(() => {
                                to="/bit/toors">
                                <span className="menu_item_icon"><TrophyOutlined /></span>
                                <span>Турниры</span>
+                           </NavLink>
+
+                       </li>
+                       <li>
+                           <NavLink
+                               end
+                               className="menu_item"
+                               activeClassName="active"
+                               to="/bit/about">
+                               <span className="menu_item_icon"><NotificationOutlined /></span>
+                               <span>Новости</span>
                            </NavLink>
 
                        </li>

@@ -3,16 +3,22 @@
   height: 100vh;
   margin: 0 auto;
   display: grid;
-  grid-template-areas: 'menu header' 'menu   content' 'menu footer';
+  grid-template-areas: 'header header' 'menu   content' 'menu footer';
   grid-template-columns: 15rem 1fr;
-  grid-template-rows: 3rem 1fr 3rem;
+  grid-template-rows: 4rem 1fr 3rem;
 }
 
 header {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.93);
+  z-index: 1000;
   grid-area: header;
   display: flex;
   justify-content: space-between;
   min-width: 320px;
+  width: 100vw;
+
+
 }
 
 aside {
@@ -24,6 +30,7 @@ aside {
 }
 
 article {
+
   grid-area: content;
   background-color: #f0f2f5;
   padding: 20px 10px 0 20px;
@@ -208,6 +215,22 @@ footer {
 .w100 {
   width: 100%; }
 
+
+.ant-tabs-top > .ant-tabs-nav, .ant-tabs-bottom > .ant-tabs-nav, .ant-tabs-top > div > .ant-tabs-nav, .ant-tabs-bottom > div > .ant-tabs-nav{
+  margin: 0 0 0 0;
+}
+
+.ant-tabs-card.ant-tabs-small > .ant-tabs-nav .ant-tabs-tab{
+  padding: 0 0 0 0 ;
+}
+
+/*.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab{*/
+/*  background: rgb(255, 255, 255);*/
+/*}*/
+
+/*.ant-tabs-tab-active{*/
+/*  background: rgb(227, 239, 246) !important;*/
+/*}*/
 
 
 
