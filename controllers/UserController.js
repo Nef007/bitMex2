@@ -98,6 +98,7 @@ class UserController {
             }
 
             const {
+                role,
                 email,
                 status,
                 password,
@@ -126,6 +127,7 @@ class UserController {
 
             const user = await User.create({
                     ...value,
+                    role: "Пользователь",
                     email: email,
                     status: from === 'new' ? "Активный" : status,
                     password: password && hashedPassword
