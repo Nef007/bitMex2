@@ -120,7 +120,7 @@ class UserController {
                 raw: true
             })
             if (candidate) {
-                res.status(400).json({message: 'Такой пользователь уже существует'})
+               return  res.status(400).json({message: 'Такой пользователь уже существует, авторизуйтесь через форму входа'})
             }
 
 
@@ -140,7 +140,7 @@ class UserController {
            await AccessService.create({service: 'Турниры', userId: user.id})
 
             res.status(201).json({
-                message: "Заявка успешно создана",
+                message: "Зарегистрирован!!!",
             });
         } catch (e) {
             console.log(e);

@@ -371,7 +371,6 @@ export const AccountPage = observer(props => {
             title: "Статус",
             dataIndex: "status",
             render: (status) => {
-
                 return (
                     <Tag
                         color={status === "Активный" ? "green" : status === "Завершен" ? "orange" : "magenta"}>
@@ -379,7 +378,6 @@ export const AccountPage = observer(props => {
                     </Tag>
 
                 )
-
             }
 
 
