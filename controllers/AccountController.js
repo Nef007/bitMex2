@@ -437,7 +437,6 @@ class AccountController {
 
 
             execution: [],
-
             executionHistory: [],
                 funding: [],
                 globalNotification: [] ,
@@ -459,6 +458,8 @@ class AccountController {
           const  acc = await Account.findByPk(req.params.id)
 
 
+
+
             const arr = [
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/execution',
                     {symbol: "XBT", reverse: true}
@@ -471,9 +472,7 @@ class AccountController {
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/funding',
                     {symbol: "XBT", reverse: true}
                 ),
-                // await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/globalNotification',
-                //
-                // ),
+
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/order',
                     {symbol: "XBT", reverse: true}
                 ),
@@ -490,14 +489,14 @@ class AccountController {
                     {}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/depositAddress',
-                    {currency: "XBt"}
+                    {currency: "XBt", network: "btc"}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/margin',
                     {currency: "XBt"}
                 ),
-                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/minWithdrawalFee',
-                    {currency: "XBt"}
-                ),
+                // await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/minWithdrawalFee',
+                //     {currency: "XBt", network: "btc"}
+                // ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/tradingVolume',
                     {}
                 ),
@@ -505,7 +504,7 @@ class AccountController {
                     {}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletHistory',
-                    {currency: "XBt"}
+                    {currency: "XBt", network: "btc"}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletSummary',
                     {currency: "XBt"}
@@ -523,7 +522,7 @@ class AccountController {
                          //  response4,
                            response5,
                             response6, response7, response8, response9, response10,
-                            response11,response12, response13,response14,response15,response16,
+                            response11, response13,response14,response15,response16,
 
                        ]) => {
 
@@ -538,7 +537,7 @@ class AccountController {
                     account.commission=response9
                     account.depositAddress=response10
                     account.margin=response11
-                    account.minWithdrawalFee=response12
+                   // account.minWithdrawalFee=response12
                     account.tradingVolume=response13
                     account.wallet=response14
                     account.walletHistory=response15

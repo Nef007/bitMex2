@@ -3,7 +3,7 @@
     "username": "postgres",
     "password": "123",
     "port": 5432,
-    "database": "bitMex",
+    "database": "bitmex",
     "host": "localhost",
     "dialect": "postgres",
     "logging": false,

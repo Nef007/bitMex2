@@ -190,7 +190,7 @@ export const InfoPage = observer(props => {
                            columns={position}
                            dataSource={accountStore.account.position}
                     />
-              <div className="title">История транзакций</div>
+                   <div className="title">История транзакций</div>
                     <Table scroll={{x: 700 }}
                            size="small"
                            rowKey={record => record.id}
@@ -204,8 +204,6 @@ export const InfoPage = observer(props => {
                            columns={walletSummary}
                            dataSource={accountStore.account.walletSummary}
                     />
-
-
 
                 </div>
 
