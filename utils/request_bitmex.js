@@ -4,7 +4,7 @@ const qs = require('qs');
 
 
 module.exports = async (apiKey, apiSecret, verb, endpoint, data = {})=>{
-    const apiRoot = '/api/v1/';
+    const apiRoot = '/api/v1';
 
     const expires = Math.round(new Date().getTime() / 1000) + 60; // 1 min in the future
 

@@ -5,25 +5,6 @@ import "./docum.css"
 
 import {observer} from "mobx-react-lite";
 
-import {useRootStore} from "../../store";
-
-
-
-const formItemLayout = {
-    labelCol: {
-        xs: {span: 24},
-        sm: {span: 8},
-    },
-    wrapperCol: {
-        xs: {span: 24},
-        sm: {span: 16},
-    },
-};
-const tailLayout = {
-    wrapperCol: {offset: 8, span: 16},
-};
-
-
 export const TitlePage = observer(props => {
 
 
@@ -35,11 +16,7 @@ export const TitlePage = observer(props => {
         <>
             <div className="title">Главная</div>
             <div className="contentOut">
-
-                    <TradingViewWidget symbol="XBTUSDJ2023" />
-
-
-
+                    <TradingViewWidget symbol="XBTUSDN2023" />
             </div>
         </>
 

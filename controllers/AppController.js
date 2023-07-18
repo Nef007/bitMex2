@@ -283,7 +283,7 @@ class AppController {
             res.json(arr);
         } catch (e) {
             console.log(e)
-            res.status(500).json({message: "Что то пошло не так попробуйте снова"});
+            res.status(500).json({message: "Ошибка получения данных об инструментах"});
         }
     };
 
