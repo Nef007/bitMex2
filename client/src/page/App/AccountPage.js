@@ -35,6 +35,8 @@ import ac from "prettier/esm/parser-yaml";
 import {getColorNum} from "../../asset/utils/utils";
 import {Link} from "react-router-dom";
 import EyeOutlined from "@ant-design/icons/lib/icons/EyeOutlined";
+import axios from 'axios';
+import {accountAPI} from '../../api/api';
 
 
 
@@ -133,11 +135,6 @@ export const AccountPage = observer(props => {
     //////////////////////////////////ПОИСК///////
 
 
-
-
-
-
-
     const onEditGroup = async (id) => {
 
         const group= {...groups.filter(item=>item.id===id)[0]}
@@ -209,6 +206,10 @@ export const AccountPage = observer(props => {
 
     const onUpdateAccount = (groupId) => {
         accountStore.getDataAll(groupId)
+    }
+
+    const downloadToCSV = async () => {
+       await accountAPI.downloadToCSV()
     }
 
 
@@ -826,7 +827,11 @@ export const AccountPage = observer(props => {
                 </Button>
 
             </Tooltip> {groups.length > 0 &&
-            <Button onClick={onUpdateGroup} type="primary">Обновить все</Button>}
+                <>
+                    <Button className="mr10" onClick={onUpdateGroup} type="primary">Обновить все</Button>
+                    <Button onClick={downloadToCSV} type="primary">Выгрузить в csv</Button>
+                </>
+           }
 
                 {groups.length > 0 ?
 

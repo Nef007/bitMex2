@@ -123,6 +123,7 @@ const createRoutes = (app, io) => {
      app.get("/accounts_info/:id", checkAuth, updateLastSeen, AccountController.getInfo);
      app.delete("/account/:id", checkAuth, updateLastSeen, AccountController.delete);
      app.put("/account/:id",  checkAuth, updateLastSeen,   AccountController.change);
+     app.get("/account_download/",  checkAuth, updateLastSeen,   AccountController.downloadToCsv);
 
     app.get("/logs", checkAuth, updateLastSeen, AppController.logs_all);
     app.delete("/logs", checkAuth, updateLastSeen, AppController.logs_delete);

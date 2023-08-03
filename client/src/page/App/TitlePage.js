@@ -16,7 +16,7 @@ export const TitlePage = observer(props => {
         <>
             <div className="title">Главная</div>
             <div className="contentOut">
-                    <TradingViewWidget symbol="XBTUSDN2023" />
+                    <TradingViewWidget symbol="XBT" />
             </div>
         </>
 

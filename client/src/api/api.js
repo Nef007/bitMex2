@@ -13,6 +13,7 @@ const request = async (url, method = 'GET', body = null, headers = {}, files = f
         if(response.status===200){
             const blob = await response.blob()
             const downloadUrl = window.URL.createObjectURL(blob)
+            console.log(downloadUrl)
             const link = document.createElement('a')
             link.href = downloadUrl
             link.download = getFileName
@@ -208,56 +209,7 @@ export const userAPI = {
 
 };
 
-export const glossaryAPI = {
-    getGlossary(search, glossary) {
-        return request(`/glossary?search=${search}&glossary=${glossary}`, 'GET', null);
-    },
 
-    deleteWordGlossary(id, glossary, token) {
-        return request(`/glossary/del?id=${id}&glossary=${glossary}`, 'DELETE', null,{
-            Authorization: `Bearer ${token}`,
-        });
-    },
-
-    getGlossaryNew(token) {
-        return request(`/glossary/new`, "GET", null, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-
-    deleteNewWordAdmin(wordId, token) {
-        return request(`/glossary/new/`, "DELETE", {wordId}, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-    getCountWordGlossary(arrayGlossary, token) {
-        return request(`/glossary/stat/`, "PUT", {arrayGlossary}, {
-            Authorization: `Bearer ${token}`,
-        });
-    },
-
-
-    changeWord({oldWord, word, glossaryValue, idNewWord}, relation,  token) {
-        return request(
-            `/glossary/new/${idNewWord}`,
-            "PUT",
-            {oldWord, word, glossaryValue, relation },
-            {
-                Authorization: `Bearer ${token}`,
-            }
-        );
-    },
-    addWord(word, glossary, token) {
-        return request(
-            `/glossary/${glossary}`,
-            "POST",
-            {word},
-            {
-                Authorization: `Bearer ${token}`,
-            }
-        );
-    },
-};
 
 
 export const groupAPI = {
@@ -366,6 +318,16 @@ export const accountAPI = {
         return  request(`/accounts_data/${groupId}`, 'GET', null, {
             Authorization: `Bearer ${token}`
         })
+
+    },
+    downloadToCSV() {
+
+
+        const token = localStorage.getItem('userData')
+
+        return  request(`/account_download/`, 'GET', null, {
+            Authorization: `Bearer ${token}`
+        }, true, "Выгрузка.csv")
 
     },
 };

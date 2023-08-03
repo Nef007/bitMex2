@@ -1,4 +1,4 @@
-
+const { Parser } = require ('json2csv');
 const moment = require('moment')
 const dbSeq = require("../db/models/index");
 
@@ -560,6 +560,31 @@ class AccountController {
             res.status(500).json({message: "Что то пошло не так попробуйте снова"});
         }
     };
+
+    downloadToCsv = async (req, res) => {
+
+        const  accounts = await Account.findAll({
+            where: {
+                userId:  req.user.id
+            },
+            raw: true
+        })
+
+        const opts = {
+            fields: ['idbitmex', 'connection','username', 'category', 'deposit' , 'transaction', 'balance', 'balance', 'apikey', 'apisecret', 'createdAt', 'updatedAt' ],
+            withBOM: true,
+        };
+
+        const json2csv = new Parser(opts );
+        const csv = json2csv.parse(accounts);
+
+        res.header('Content-Type', 'text/csv');
+        res.attachment("Выгрузка");
+        return res.send(csv);
+
+
+
+    }
 
 
 
