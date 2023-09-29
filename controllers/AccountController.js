@@ -462,19 +462,19 @@ class AccountController {
 
             const arr = [
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/execution',
-                    {symbol: "XBT", reverse: true}
+                    { reverse: true}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/execution/tradeHistory',
-                    {symbol: "XBT", reverse: true}
+                    { reverse: true}
                 ),
 
 
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/funding',
-                    {symbol: "XBT", reverse: true}
+                    { reverse: true}
                 ),
 
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/order',
-                    {symbol: "XBT", reverse: true}
+                    { reverse: true}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/position',
                     {count: 100}
@@ -492,7 +492,7 @@ class AccountController {
                     {currency: "XBt", network: "btc"}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/margin',
-                    {currency: "XBt"}
+                    {}
                 ),
                 // await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/minWithdrawalFee',
                 //     {currency: "XBt", network: "btc"}
@@ -504,10 +504,10 @@ class AccountController {
                     {}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletHistory',
-                    {currency: "XBt", network: "btc"}
+                    {}
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletSummary',
-                    {currency: "XBt"}
+                    {}
                 ),
 
 
@@ -581,9 +581,6 @@ class AccountController {
         res.header('Content-Type', 'text/csv');
         res.attachment("Выгрузка");
         return res.send(csv);
-
-
-
     }
 
 
