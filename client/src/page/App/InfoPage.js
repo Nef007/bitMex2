@@ -52,10 +52,28 @@ export const InfoPage = observer(props => {
         if(accountStore.account.executionHistory.length>0){
         for (let i in accountStore.account.executionHistory[0]) {
 
-            executionHistory.push({
-                title: i,
-                dataIndex: i,
-            })
+            if(i==='execType'){
+
+                executionHistory.push({
+                    title: i,
+                    dataIndex: i,
+                    filters: Array.from(new Set(accountStore.account.executionHistory.map(item=> item.execType))).map(i=>( {
+                        text: i,
+                        value: i,
+                    })),
+                    filteredValue: ['Trade'],
+                    onFilter: (value, record) => record.execType.indexOf(value) === 0,
+                })
+
+
+            }else {
+                executionHistory.push({
+                    title: i,
+                    dataIndex: i,
+                })
+            }
+
+
 
         }
         }
@@ -169,13 +187,13 @@ export const InfoPage = observer(props => {
                            columns={executionHistory}
                            dataSource={accountStore.account.executionHistory}
                     />
-                    <div className="title">История финансирования свопов</div>
-                    <Table scroll={{x: 700 }}
-                           size="small"
-                           rowKey={record => record.id}
-                           columns={funding}
-                           dataSource={accountStore.account.funding}
-                    />
+                    {/*<div className="title">История финансирования свопов</div>*/}
+                    {/*<Table scroll={{x: 700 }}*/}
+                    {/*       size="small"*/}
+                    {/*       rowKey={record => record.id}*/}
+                    {/*       columns={funding}*/}
+                    {/*       dataSource={accountStore.account.funding}*/}
+                    {/*/>*/}
                      <div className="title">Ордеры</div>
                     <Table scroll={{x: 700 }}
                            size="small"
