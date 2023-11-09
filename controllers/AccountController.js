@@ -580,7 +580,7 @@ class AccountController {
         })
 
         const opts = {
-            fields: ['idbitmex', 'connection','username', 'category', 'deposit' , 'transaction', 'balance', 'balance', 'apikey', 'apisecret', 'createdAt', 'updatedAt' ],
+            fields: ['idbitmex', 'connection','username', 'category', 'deposit' , 'transaction', 'balance', 'comment_monit', 'apikey', 'apisecret', 'createdAt', 'updatedAt' ],
             withBOM: true,
         };
 
