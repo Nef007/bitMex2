@@ -328,9 +328,16 @@ class AccountController {
                                 console.log('Ошибка получения данных')
                                 throw error
                             })
+                        let a = 0
+
+                        let balance = wallet.filter(item=>item.currency === 'USDt')[0]
+
+                        if(balance){
+                             a = Math.floor(balance.amount/1000000)
+                        }
 
                          // использую что не делать миграцию
-                        account.balance = Math.floor((wallet.filter(item=>item.currency === 'USDt')[0].amount)/1000000)
+                        account.balance = a
                         account.comment_monit = wallet.map(item=> {
 
                             if(item.currency==='USDt'){
