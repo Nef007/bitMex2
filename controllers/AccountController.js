@@ -296,7 +296,7 @@ class AccountController {
                             //     {currency: "XBt"}
                             // ),
                             await request_bitmex(account.apikey, account.apisecret, 'GET', '/user/wallet',
-                                {currency: "XBt"}
+                                {currency: "all"}
                             ),
                             await request_bitmex(account.apikey, account.apisecret, 'GET', '/apiKey',
                                 {}
@@ -329,8 +329,16 @@ class AccountController {
                                 throw error
                             })
 
+                         // использую что не делать миграцию
+                        account.balance = Math.floor((wallet.filter(item=>item.currency === 'USDt')[0].amount)/1000000)
+                        account.comment_monit = wallet.map(item=> {
 
-                        account.balance = wallet.amount
+                            if(item.currency==='USDt'){
+                                return `${item.currency}:${(item.amount/1000000).toFixed(2)}`
+                            }
+
+
+                            return `${item.currency}:${item.amount}`}).join(',')
                         account.trade = order.length
                         account.transaction = String(positionBit.filter(item => item.avgEntryPrice !== null && item.liquidationPrice !== null).map(item => `${item.symbol}: ${item.currentQty.toFixed(2)}/${item.avgEntryPrice.toFixed(2)}/${item.liquidationPrice.toFixed(2)}/${item.unrealisedPnl.toFixed(2)}/${item.markPrice.toFixed(2)}`) || '')
                         account.api = api.length
@@ -342,7 +350,8 @@ class AccountController {
                             trade: account.trade,
                             transaction: account.transaction,
                             api: account.api,
-                            comment: `Обновлен:`
+                            comment: `Обновлен:`,
+                            comment_monit: account.comment_monit
 
                         }, {
                             where: {

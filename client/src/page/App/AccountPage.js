@@ -318,15 +318,20 @@ export const AccountPage = observer(props => {
             ...getColumnSearchProps('username'),
 
 
-        }, {
-            title: "Депозит",
-            dataIndex: "deposit",
+        },
+
+        {
+            title: "Баланс",
+            dataIndex: "comment_monit",
+           // defaultSortOrder: 'descend',
+           // sorter: (a, b) => +a.balance - +b.balance,
+            render: (text) =>text && text.split(',').map((item) => <Tag>{item}</Tag>)
         },
         {
-            title: "Текущий депозит",
+            title: "USDt",
             dataIndex: "balance",
-            defaultSortOrder: 'descend',
-            sorter: (a, b) => +a.balance - +b.balance,
+             defaultSortOrder: 'descend',
+             sorter: (a, b) => +a.balance - +b.balance,
         },
         {
             title: "Тикет/позиции/откр./ликвид./PNL",
