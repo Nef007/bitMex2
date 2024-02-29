@@ -225,10 +225,11 @@ class AppController {
 
     getIndex = async (req, res) => {
         try {
+            let dataIndex =  await request_bitmex(null, null, 'GET', '/instrument/active' )
+           // let dataIndex = await axios.get('https://www.bitmex.com/api/v1/instrument/active')
 
-          let dataIndex =  await request_bitmex(null, null, 'GET', '/instrument/active',
-                {}
-            )
+
+
 
 
             let arr = []

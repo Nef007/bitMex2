@@ -51,13 +51,12 @@ class AccountController {
 
             try {
 
-                userBit = await request_bitmex(account.apikey, account.apisecret, 'GET', '/user',
-                    {}
-                );
+                userBit = await request_bitmex(account.apikey, account.apisecret, 'GET', '/user' );
 
 
             } catch (e) {
                 console.log(moment(Date.now()).format("HH:mm DD.MM.YYYY"),e)
+
 
                 if (e.code === 401) {
                     return res.status(400).json({message: 'Ошибка получения данных c BitMex.  Invalid API Key.'})
@@ -495,35 +494,31 @@ class AccountController {
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/position',
                     {count: 100}
                 ),
-                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user',
-                    {}
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user'
+
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/affiliateStatus',
                     {currency: "XBt"}
                 ),
-                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/commission',
-                    {}
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/commission'
+
                 ),
                 await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/depositAddress',
                     {currency: "XBt", network: "btc"}
                 ),
-                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/margin',
-                    {}
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/margin'
+
                 ),
                 // await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/minWithdrawalFee',
                 //     {currency: "XBt", network: "btc"}
                 // ),
-                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/tradingVolume',
-                    {}
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/tradingVolume'
                 ),
-                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/wallet',
-                    {}
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/wallet'
                 ),
-                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletHistory',
-                    {}
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletHistory'
                 ),
-                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletSummary',
-                    {}
+                await request_bitmex(acc.apikey, acc.apisecret, 'GET', '/user/walletSummary'
                 ),
 
 

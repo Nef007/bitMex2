@@ -63,8 +63,7 @@ async function start() {
                             await request_bitmex(account.apikey, account.apisecret, 'GET', '/user/wallet',
                                 {currency: "XBt"}
                             ),
-                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/apiKey',
-                                {}
+                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/apiKey'
                             ),
                             await request_bitmex(account.apikey, account.apisecret, 'GET', '/position',
                                 {reverse: true}

@@ -3,21 +3,34 @@ const crypto = require('crypto');
 const qs = require('qs');
 
 
-module.exports = async (apiKey, apiSecret, verb, endpoint, data = {})=>{
+module.exports = async (apiKey, apiSecret, verb, endpoint, data )=>{
     const apiRoot = '/api/v1';
 
     const expires = Math.round(new Date().getTime() / 1000) + 60; // 1 min in the future
 
     let query = '', postBody = '';
     if (verb === 'GET')
-        query = '?' + qs.stringify(data);
+        if(data) query = '?' + qs.stringify(data);
+
     else
         // Pre-compute the reqBody so we can be sure that we're using *exactly* the same body in the request
         // and in the signature. If you don't do this, you might get differently-sorted keys and blow the signature.
         postBody = JSON.stringify(data);
 
+    let string = verb + apiRoot + endpoint
+    if(query){
+        string+= query
+    }
+
+    string+= expires
+
+    if(postBody){
+        string+= postBody
+    }
+
     const signature = apiSecret ? crypto.createHmac('sha256', apiSecret)
-        .update(verb + apiRoot + endpoint + query + expires + postBody).digest('hex') : '';
+             .update(string).digest('hex') : '';
+
 
     const headers = apiKey &&  apiSecret ? {
         'content-type': 'application/json',
