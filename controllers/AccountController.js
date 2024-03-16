@@ -303,8 +303,8 @@ class AccountController {
                             await request_bitmex(account.apikey, account.apisecret, 'GET', '/position',
                                 {reverse: true}
                             ),
-                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
-                                {reverse: true, filter:{"open": true}}
+                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/order?filter=%7B%22open%22%3A%20true%7D',
+                                {reverse: true}
                             ),
 
 
