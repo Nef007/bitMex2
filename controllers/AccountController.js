@@ -163,14 +163,14 @@ class AccountController {
                     await request_bitmex(account.apikey, account.apisecret, 'GET', '/position',
                         {reverse: true}
                     ),
-                    await request_bitmex(account.apikey, account.apisecret, 'GET', '/order?filter=%7B%22open%22%3A%20true%7D',
-                        {reverse: true, count: 100}
+                    await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
+                        {reverse: true, filter: {open: true}, count: 100}
                     ),
 
 
                 ]
 
-
+//?filter=%7B%22open%22%3A%20true%7D
 
                 await Promise.all(arr)
                     .then(([response1, response2, response3, response4  ]) => {
@@ -303,8 +303,8 @@ class AccountController {
                             await request_bitmex(account.apikey, account.apisecret, 'GET', '/position',
                                 {reverse: true}
                             ),
-                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/order?filter=%7B%22open%22%3A%20true%7D',
-                                {reverse: true}
+                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
+                                {reverse: true, filter: {open: true}}
                             ),
 
 
