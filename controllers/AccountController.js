@@ -252,11 +252,13 @@ class AccountController {
             const accounts = await Account.findAll({
                 where:{
                     ...qweryPar
-                }
+                },
+                raw: true
             })
 
 
             for (let account of accounts) {
+                account.children =[]
 
                 if (account.status === "Активный") {
 
@@ -288,6 +290,7 @@ class AccountController {
                         let api = ''
                         let positionBit = []
                         let order = ''
+                        let userInfo = ''
 
 
                         const arr = [
@@ -306,19 +309,23 @@ class AccountController {
                             await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
                                 {reverse: true, filter: {open: true}}
                             ),
+                            await request_bitmex(account.apikey, account.apisecret, 'GET', '/user'
+
+                        ),
 
 
                         ]
 
 
                         await Promise.all(arr)
-                            .then(([response1, response2, response3, response4]) => {
+                            .then(([response1, response2, response3, response4, response5]) => {
 
                                 wallet = response1
                                 //  console.log(wallet)
                                 api = response2
                                 positionBit = response3
                                 order = response4
+                                userInfo = response5
 
 
 
@@ -327,6 +334,77 @@ class AccountController {
                                 console.log('Ошибка получения данных')
                                 throw error
                             })
+
+
+
+                            if(userInfo.accounts.length){
+                    
+                                const subAccounts = userInfo.accounts.filter(sub => sub.role === "SUB_ACCOUNT")
+                              //  { id: 2227509, name: 'NFlower', role: 'SUB_ACCOUNT', color: '' } 
+                               
+                              for(let subik of subAccounts){
+
+                           
+                           
+                              let positionBit = []
+                              let order = ''
+                            
+      
+                              // получение данных для субакаунтов
+                              const arr = [
+                                  // await makeRequest(user.apikey, user.apisecret, 'GET', '/user/wallet',
+                                  //     {currency: "XBt"}
+                                  // ),
+                                //   await request_bitmex(account.apikey, account.apisecret, 'GET', '/user/wallet',
+                                //       {currency: "all", targetAccountIds: [subAccount.id]}
+                                //   ),
+                                //   await request_bitmex(account.apikey, account.apisecret, 'GET', '/apiKey',
+                                //       { targetAccountId: subAccount.id}
+                                //   ),
+                                  await request_bitmex(account.apikey, account.apisecret, 'GET', '/position',
+                                      {reverse: true,  targetAccountIds: [subik.id]}
+                                  ),
+                                  await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
+                                      {reverse: true, filter: {open: true},  targetAccountIds: [subik.id]}
+                                  ),
+                                 
+                              ]
+      
+      
+                              await Promise.all(arr)
+                                  .then(([response3, response4, ]) => {
+      
+                                    //   wallet = response1
+                                    //   console.log("Суб wallet",wallet)
+                                    //   api = response2
+                                    //   console.log("Суб api",api)
+                                      positionBit = response3
+                                      console.log("Суб positionBit", positionBit)
+                                      order = response4
+                                      console.log("Суб order",order)
+                                      console.log("==================")
+                                   
+      
+      
+      
+                                  })
+                                  .catch(error => {
+                                      console.log('Ошибка получения данных')
+                                      throw error
+                                  })
+
+                                  account.children.push({
+                                    id: subik.id,
+                                    username: subik.name,
+                                    positionBit,
+                                    order
+                                  })
+      
+
+                                }
+
+
+                            }
                         let a = 0
 
                         let balance = wallet.filter(item=>item.currency === 'USDt')[0]
@@ -381,6 +459,9 @@ class AccountController {
 
                 }
             }
+
+
+            console.log(accounts)
 
 
             res.json(accounts)
