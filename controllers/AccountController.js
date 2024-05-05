@@ -396,8 +396,8 @@ class AccountController {
                                   account.children.push({
                                     id: subik.id,
                                     username: subik.name,
-                                    positionBit,
-                                    order
+                                    transaction: String(positionBit.filter(item => item.avgEntryPrice !== null && item.liquidationPrice !== null).map(item => `${item.symbol}: ${item.currentQty.toFixed(2)}/${item.avgEntryPrice.toFixed(2)}/${item.liquidationPrice.toFixed(2)}/${item.unrealisedPnl.toFixed(2)}/${item.markPrice.toFixed(2)}`) || ''),
+                                    trade: order.length
                                   })
       
 
