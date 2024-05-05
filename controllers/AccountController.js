@@ -347,6 +347,7 @@ class AccountController {
                            
                            
                               let positionBit = []
+                              let execution = []
                               let order = ''
                             
       
@@ -361,7 +362,7 @@ class AccountController {
                                 //   await request_bitmex(account.apikey, account.apisecret, 'GET', '/apiKey',
                                 //       { targetAccountId: subAccount.id}
                                 //   ),
-                                  await request_bitmex(account.apikey, account.apisecret, 'GET', '/position',
+                                  await request_bitmex(account.apikey, account.apisecret, 'GET', '/execution',
                                       {reverse: true,  targetAccountIds: [subik.id]}
                                   ),
                                   await request_bitmex(account.apikey, account.apisecret, 'GET', '/order',
@@ -378,11 +379,10 @@ class AccountController {
                                     //   console.log("Суб wallet",wallet)
                                     //   api = response2
                                     //   console.log("Суб api",api)
-                                      positionBit = response3
-                                      console.log("Суб positionBit", positionBit)
+                                      execution = response3
+                                
                                       order = response4
-                                      console.log("Суб order",order)
-                                      console.log("==================")
+                                    
                                    
       
       
@@ -396,8 +396,10 @@ class AccountController {
                                   account.children.push({
                                     id: subik.id,
                                     username: subik.name,
-                                    transaction: String(positionBit.filter(item => item.avgEntryPrice !== null && item.liquidationPrice !== null).map(item => `${item.symbol}: ${item.currentQty.toFixed(2)}/${item.avgEntryPrice.toFixed(2)}/${item.liquidationPrice.toFixed(2)}/${item.unrealisedPnl.toFixed(2)}/${item.markPrice.toFixed(2)}`) || ''),
-                                    trade: order.length
+                                   // transaction: String(execution.length)+": / / /",
+                                    trade: order.length,
+                                  //  positionBit
+                                   // order
                                   })
       
 
