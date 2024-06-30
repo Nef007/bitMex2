@@ -195,7 +195,7 @@ class AccountController {
 
                 account.balance = wallet.amount
                 account.trade = order.length
-                account.transaction = String(positionBit.filter(item=>  item.avgEntryPrice!==null && item.liquidationPrice!==null ).map(item => `${item.symbol}: ${item.currentQty.toFixed(2)}/${item.avgEntryPrice.toFixed(2)}/${item.liquidationPrice.toFixed(2)}/${item.unrealisedPnl.toFixed(2)}/${item.markPrice.toFixed(2)}`)  || '')
+                account.transaction = String(positionBit.filter(item=>  item.avgEntryPrice!==null && item.liquidationPrice!==null ).map(item => `${item.symbol}: ${item.currentQty ? item.currentQty.toFixed(2): 0}/${item.avgEntryPrice ? item.avgEntryPrice.toFixed(2): 0}/${item.liquidationPrice ? item.liquidationPrice.toFixed(2): 0}/${item.unrealisedPnl ? item.unrealisedPnl.toFixed(2): 0}/${item.markPrice ? item.markPrice.toFixed(2): 0}`)  || '')
                 account.api = api.length
                 account.comment = `Обновлен# ${new Date}`
 
@@ -426,7 +426,7 @@ class AccountController {
 
                             return `${item.currency}:${item.amount}`}).join(',')
                         account.trade = order.length
-                        account.transaction = String(positionBit.filter(item => item.avgEntryPrice !== null && item.liquidationPrice !== null).map(item => `${item.symbol}: ${item.currentQty.toFixed(2)}/${item.avgEntryPrice.toFixed(2)}/${item.liquidationPrice.toFixed(2)}/${item.unrealisedPnl.toFixed(2)}/${item.markPrice.toFixed(2)}`) || '')
+                        account.transaction = String(positionBit.filter(item=>  item.avgEntryPrice!==null && item.liquidationPrice!==null ).map(item => `${item.symbol}: ${item.currentQty ? item.currentQty.toFixed(2): 0}/${item.avgEntryPrice ? item.avgEntryPrice.toFixed(2): 0}/${item.liquidationPrice ? item.liquidationPrice.toFixed(2): 0}/${item.unrealisedPnl ? item.unrealisedPnl.toFixed(2): 0}/${item.markPrice ? item.markPrice.toFixed(2): 0}`)  || '')
                         account.api = api.length
                         account.comment = `Обновлен# ${new Date}`
 
